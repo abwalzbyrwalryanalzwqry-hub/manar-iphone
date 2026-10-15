@@ -45,7 +45,7 @@ jobs:
         with:
           distribution: temurin
           java-version: 21
-      - uses: gradle/actions/setup-gradle@v5
+      - uses: gradle/actions/setup-gradle@v6
       # خط ثمانية من المستودع الخاص manar-fonts (ترخيصه يمنع رفعه هنا). إلزامي لبناء main
       # والإصدار، واختياري لطلبات الدمج التي لا تصلها الأسرار (Dependabot والتفرعات).
       - name: جلب خط ثمانية
