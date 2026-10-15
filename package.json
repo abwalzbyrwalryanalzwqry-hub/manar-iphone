@@ -36,7 +36,7 @@
     "@capacitor/preferences": "^7.0.4",
     "@capacitor/share": "^7.0.4",
     "@capacitor/splash-screen": "^7.0.5",
-    "@capacitor/status-bar": "^7.0.6",
+    "@capacitor/status-bar": "^8.0.4",
     "@radix-ui/react-dialog": "^1.1.15",
     "@tailwindcss/vite": "^4.2.1",
     "@tanstack/react-router": "^1.168.25",
