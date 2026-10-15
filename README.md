@@ -1,11 +1,47 @@
-# منار — نور يهديك في كل وقت
+# منار ايفون — نور يهديك في كل وقت
 
-تطبيق إسلامي عربي لأندرويد: مواقيت الصلاة والأذان، والقرآن الكريم بمصحف المدينة، والأذكار
-والورد، والقبلة، والتقويم الهجري، ومواسم العبادة. يعمل كاملاً بلا إنترنت، ولا يجمع أي بيانات
-عن مستخدمه.
+نسخة **iPhone** من تطبيق [منار](https://github.com/abwalzbyrwalryanalzwqry-hub/manar): مواقيت الصلاة
+والأذان، والقرآن الكريم بمصحف المدينة، والأذكار والورد، والقبلة، والتقويم الهجري، ومواسم العبادة.
+يعمل كاملاً بلا إنترنت، ولا يجمع أي بيانات عن مستخدمه.
 
-- المعرّف: `app.manar.islamic` — أندرويد ٧ فما فوق (`minSdk 24`، `targetSdk 36`).
-- الواجهة عربية أولاً (RTL)، والأرقام والساعة حسب اختيار المستخدم.
+- المعرّف: `app.manar.islamic` — iOS ‏15 فما فوق (iPhone).
+- للتوزيع المحدود بين الأهل والأصدقاء، **لا عبر App Store**.
+- الواجهة نفسها (عربية أولاً RTL)؛ والطبقة الأصلية مكتوبة من جديد بـ Swift لتناسب iOS.
+
+## التثبيت على iPhone
+
+كل إصدار يُبنى آلياً على macOS ويُنشر ملف `Manar-iPhone.ipa` في
+[صفحة الإصدارات](https://github.com/abwalzbyrwalryanalzwqry-hub/manar-iphone/releases/latest)
+(وكل بناء في تبويب Actions ضمن المخرَجات). اختر طريقة:
+
+### ١) مجاناً بحساب Apple عادي — AltStore أو SideStore أو Sideloadly
+
+1. ثبّت [AltStore](https://altstore.io) (أو SideStore / Sideloadly) على الكمبيوتر وiPhone.
+2. نزّل `Manar-iPhone.ipa` على الجوال وافتحه بـ AltStore ← «Install»، وسجّل بحساب Apple الخاص بك.
+3. على iPhone: الإعدادات ← عام ← VPN وإدارة الجهاز ← ثق بحسابك.
+4. iOS 16 فأحدث: الإعدادات ← الخصوصية والأمان ← «وضع المطوّر» ← تشغيل، ثم أعد التشغيل.
+
+> الحساب المجاني يوقّع التطبيق ٧ أيام؛ AltStore/SideStore يجدّده وحده ما دام متصلاً
+> (أو جدّده يدوياً). الحدّ ٣ تطبيقات موقّعة ذاتياً على الجهاز. الويدجت يعمل لأن الأداة تنشئ
+> «مجموعة التطبيقات» المطلوبة بحسابك.
+
+### ٢) حساب Apple Developer مدفوع — Ad Hoc حتى ١٠٠ جهاز وسنة كاملة
+
+أضف أجهزة العائلة (UDID) في حسابك، وأنشئ ملفَّي تعريف Ad Hoc لـ `app.manar.islamic`
+و`app.manar.islamic.widget` (مع مجموعة `group.app.manar.islamic`)، ثم ضع في أسرار المستودع:
+`IOS_CERT_P12_BASE64`، `IOS_CERT_PASSWORD`، `IOS_PROFILE_APP_BASE64`، `IOS_PROFILE_WIDGET_BASE64`.
+يُخرج البناء عندها `Manar-iPhone-adhoc.ipa` موقّعاً جاهزاً للتثبيت بلا تجديد أسبوعي.
+وبالحساب نفسه يمكن أيضاً TestFlight (حتى ١٠٠ مختبر داخلي) دون نشرٍ في المتجر.
+
+## ما يختلف في iPhone (حدود النظام لا أخطاء)
+
+| الأمر                                            | على iPhone                                                                                                                                                                      |
+| ------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| صوت الأذان والتطبيق مغلق                         | يسمح iOS بصوت إشعار حتى ٣٠ ثانية: يُسمع مطلع الأذان. والأذان **كاملاً** يُشغَّل عند فتح الإشعار (خلال ٤ دقائق) أو زر «استمع للأذان كاملاً»، أو تلقائياً إن كان التطبيق مفتوحاً. |
+| زر الصامت الجانبي                                | يكتم أصوات الإشعارات كلها (يبقى الإشعار والاهتزاز).                                                                                                                             |
+| ٦٤ إشعاراً معلّقاً حدّ النظام                    | يجدول منار الأقرب أولاً (يومان تقريباً) ويجدّد الجدول عند كل فتح، وفي الخلفية، مع تذكير «افتح منار» قبل نفاد الجدول. افتح التطبيق مرة كل يومين.                                 |
+| سكينة                                            | لا يسمح iOS لأي تطبيق بتشغيل «عدم الإزعاج»: تذكّرك سكينة بتفعيل «التركيز» وتكتم أصوات منار أثناء الفترة.                                                                        |
+| مستوى صوت المنبّه / المنبّهات الدقيقة / البطارية | لا مقابل لها في iOS؛ إشعارات منار «حسّاسة للوقت» وتصل في موعدها بالثانية.                                                                                                       |
 
 ## الميزات
 
@@ -20,64 +56,64 @@
 
 ## البنية
 
-- **الويب:** React 19 + TanStack Start/Router، وTailwind CSS. تُبنى نسخة أندرويد تطبيقَ صفحة
-  واحدة ثابتاً (`vite.config.capacitor.ts`) بلا خادم.
-- **أندرويد:** Capacitor 7، وطبقة أصلية بلغة Java في
-  `android/app/src/main/java/app/manar/islamic/`: جدولة الأذان بـ`AlarmManager`، والخدمة الأمامية،
-  والويدجت، وقنوات الإشعار.
+- **الويب:** React 19 + TanStack Start/Router، وTailwind CSS. تُبنى نسخة iPhone تطبيقَ صفحة واحدة
+  ثابتاً (`vite.config.capacitor.ts`، هدف Safari 15) بلا خادم.
+- **iOS:** Capacitor 7 (Swift Package Manager)، وطبقة أصلية بـ Swift في `ios/App/App/Manar/`:
+  جدولة الأذان بـ `UNUserNotificationCenter`، تشغيل الأذان الكامل بـ `AVAudioPlayer`، أزرار الإشعار
+  (صلّيت/أجّل/استمع)، تحديث الجدول في الخلفية (`BGAppRefreshTask`)، وسكينة. الويدجت بـ WidgetKit في
+  `ios/App/ManarWidget/`. مشروع Xcode يُولَّد بـ XcodeGen من `ios/App/project.yml`.
+- **الأصوات:** مقاطع إشعار CAF (≤ ٣٠ ث) في `ios/App/App/ManarSounds` يولّدها `npm run ios:sounds`،
+  والتسجيلات الكاملة تُنسخ إلى الحزمة عند البناء.
 - **البيانات:** كلها داخل الحزمة. ولا شبكة إلا للتلاوات عند الطلب، ولتحسين اسم المدينة عبر
-  OpenStreetMap Nominatim بإحداثيات مقرّبة (انظر سياسة الخصوصية في التطبيق).
+  OpenStreetMap Nominatim بإحداثيات مقرّبة.
 
 ```
 src/routes/            الشاشات (مسار لكل ملف)
-src/components/manar/  مكوّنات التطبيق
-src/lib/               المنطق: المواقيت، الهجري، الأماكن، الإشعارات، القرآن…
-scripts/               سكربتات توليد البيانات والبناء
+src/lib/               المنطق: المواقيت، الهجري، الإشعارات (ios.ts للفروق)…
+ios/App/App/Manar/     الطبقة الأصلية Swift
+ios/App/ManarWidget/   الويدجت
+scripts/ios/           توليد المشروع، بناء IPA، التوقيع، اختبار المحاكي
 tests/unit/            اختبارات Vitest
-docs/                  خطة التطوير، التكامل المستمر، قوائم الفحص على الجهاز
 ```
 
-## التشغيل
+## البناء (macOS)
 
-يلزم Node ‏22.12 فما فوق، ولبناء أندرويد JDK 21 وAndroid SDK 36.
+يلزم Node ‏22.12+ وXcode ‏16+ و`brew install xcodegen`.
 
 ```bash
 npm ci
-npm run dev                # معاينة في المتصفح
-npm run build:android      # بناء الويب + نسخ الأصوات إلى res/raw + cap sync
-npm run android:apk:debug  # APK تجريبي
+npm run build:ios      # بناء الواجهة + نسخ الأصوات + cap sync
+npm run ios:project    # توليد App.xcodeproj
+open ios/App/App.xcodeproj         # التشغيل على جهازك من Xcode
+bash scripts/ios/build-ipa.sh      # build/Manar-iPhone.ipa
+bash scripts/ios/smoke-test.sh     # تشغيل على المحاكي وصور لكل شاشة
 ```
 
-خط الواجهة (ثمانية) لا يُرفع إلى هذا المستودع لأن ترخيصه يمنع إعادة توزيع ملفاته؛ يجلبه البناء الآلي من
-مستودع خاص ويضمّنه في الحزمة. وللبناء على جهازك راجع [public/fonts/THMANYAH.md](public/fonts/THMANYAH.md).
+خط الواجهة (ثمانية) لا يُرفع إلى هذا المستودع لأن ترخيصه يمنع إعادة توزيع ملفاته؛ يجلبه البناء
+الآلي من مستودع خاص عند توفّر السرّ `MANAR_FONTS_DEPLOY_KEY`، وإلا يُستعمل الخط الاحتياطي.
 
 ## الفحوص
 
 ```bash
-npm run typecheck          # TypeScript (المتغيّرات غير المستعملة أخطاء)
-npm run lint               # ESLint
-npx prettier --check .
-npm run knip               # ملفات وتبعيات بلا استعمال
-npm test                   # Vitest
-MANAR_TEST_TZ=Pacific/Auckland npm test   # الاختبارات نفسها بمنطقة زمنية أخرى
-bash scripts/android/javac-check.sh       # ترجمة Java دون Gradle
+npm run typecheck && npm run lint && npx prettier --check . && npm run knip
+npm test
 ```
 
-سير العمل في `.github/workflows` يشغّلها على كل طلب دمج — التفاصيل في
-[docs/CI.ar.md](docs/CI.ar.md). وما لا يُختبر إلا على هاتف حقيقي في
-[docs/testing/PHONE-CHECKLIST.ar.md](docs/testing/PHONE-CHECKLIST.ar.md).
+سير العمل `ios.yml` يبني على macOS، ويشغّل التطبيق على محاكي iPhone ويتنقّل بين الشاشات ويفشل عند
+أي انهيار أو خطأ JavaScript، ثم يخرج ملف IPA.
 
 ## البيانات المولَّدة
 
 لا تُعدَّل يدوياً؛ يُعاد توليدها بسكربتها:
 
-| الملف                      | السكربت                                    |
-| -------------------------- | ------------------------------------------ |
-| `src/lib/arab-places.ts`   | `scripts/build-arab-places.py` (GeoNames)  |
-| `src/lib/world-cities.ts`  | `scripts/build-world-cities.py` (GeoNames) |
-| `src/lib/hijri-table.ts`   | `scripts/build-hijri-table.mjs` (ICU)      |
-| بيانات حصن المسلم والورد   | `scripts/azkar/build-hisn.py`              |
-| نسخ الصوت المخفّضة للقنوات | `scripts/build-volume-levels.mjs` (ffmpeg) |
+| الملف                     | السكربت                                    |
+| ------------------------- | ------------------------------------------ |
+| `src/lib/arab-places.ts`  | `scripts/build-arab-places.py` (GeoNames)  |
+| `src/lib/world-cities.ts` | `scripts/build-world-cities.py` (GeoNames) |
+| `src/lib/hijri-table.ts`  | `scripts/build-hijri-table.mjs` (ICU)      |
+| بيانات حصن المسلم والورد  | `scripts/azkar/build-hisn.py`              |
+| نسخ الصوت المخفّضة        | `scripts/build-volume-levels.mjs` (ffmpeg) |
+| مقاطع إشعار iOS (CAF)     | `scripts/build-ios-sounds.mjs` (ffmpeg)    |
 
 ## المصادر والتراخيص
 

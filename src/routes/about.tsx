@@ -4,7 +4,8 @@ import { Icon, icons, Screen, ScreenHeader, SectionLabel, Mark } from "@/compone
 import { DeveloperCard } from "@/components/manar/developer-card";
 import { toast } from "@/lib/toast";
 import { copyText, DEVELOPER, openContact } from "@/lib/developer";
-import { PUBLISHED_ON_PLAY, rateApp, shareApp } from "@/lib/app-store";
+import { IPHONE_DOWNLOAD_URL, PUBLISHED_ON_PLAY, rateApp, shareApp } from "@/lib/app-store";
+import { openExternalNative } from "@/lib/native-notifications";
 import { BUILD_VERSION, formatAppVersion, readAppVersion } from "@/lib/app-version";
 
 export const Route = createFileRoute("/about")({
@@ -62,6 +63,12 @@ function About() {
         {PUBLISHED_ON_PLAY && (
           <LinkRow icon={icons.star} l="قيّم التطبيق" v="Google Play" onClick={() => void rate()} />
         )}
+        <LinkRow
+          icon={icons.download}
+          l="آخر إصدار لـ iPhone"
+          v="GitHub"
+          onClick={() => void openUpdates()}
+        />
         <LinkRow icon={icons.share} l="شارك التطبيق" v="" onClick={() => void share()} />
       </div>
 
@@ -103,6 +110,13 @@ function useAppVersion(): string {
 
 async function rate() {
   if (!(await rateApp())) toast.error("تعذّر فتح Google Play على هذا الجهاز");
+}
+
+async function openUpdates() {
+  const native = await openExternalNative([IPHONE_DOWNLOAD_URL]);
+  if (native) return;
+  if (native == null && window.open(IPHONE_DOWNLOAD_URL, "_blank", "noopener,noreferrer")) return;
+  toast.error("تعذّر فتح صفحة الإصدارات");
 }
 
 async function share() {

@@ -38,26 +38,42 @@ xcrun simctl status_bar "$UDID" override --time 9:41 --batteryState charged --ba
 xcrun simctl privacy "$UDID" grant location "$BUNDLE" 2>/dev/null
 xcrun simctl install "$UDID" "$APP" || { echo "::error::فشل التثبيت"; exit 1; }
 
+# ١) الإقلاع الأول (شاشات الترحيب) مع سجلّ console كاملاً.
 xcrun simctl launch --console-pty --terminate-running-process "$UDID" "$BUNDLE" > "$OUT/console.log" 2>&1 &
 LAUNCHER=$!
 sleep 25
 xcrun simctl io "$UDID" screenshot "$OUT/01-launch.png" >/dev/null 2>&1
-
-i=2
-for route in prayer quran azkar qibla calendar notifications adhan sakinah widget reminders tasbih more; do
-  xcrun simctl openurl "$UDID" "manar://$route" 2>/dev/null
-  sleep 4
-  xcrun simctl io "$UDID" screenshot "$OUT/$(printf %02d $i)-$route.png" >/dev/null 2>&1
-  i=$((i + 1))
-done
-
 ALIVE=0
 xcrun simctl spawn "$UDID" launchctl list 2>/dev/null | grep -q "$BUNDLE" && ALIVE=1
 kill "$LAUNCHER" 2>/dev/null
+
+# ٢) كل شاشة رئيسية بإقلاعٍ بارد إلى مسارها — المسار نفسه الذي يسلكه نقر إشعار
+# (أو الويدجت) والتطبيق مغلق. نافذة «فتح في منار؟» لا تظهر بهذه الطريقة.
+i=2
+for route in home prayer quran azkar qibla calendar notifications adhan sakinah widget reminders tasbih more about; do
+  xcrun simctl launch --console-pty --terminate-running-process "$UDID" "$BUNDLE" -ManarSmokeRoute "/$route" \
+    >> "$OUT/console.log" 2>&1 &
+  LAUNCHER=$!
+  sleep 9
+  xcrun simctl io "$UDID" screenshot "$OUT/$(printf %02d $i)-$route.png" >/dev/null 2>&1
+  xcrun simctl spawn "$UDID" launchctl list 2>/dev/null | grep -q "$BUNDLE" || { echo "::error::انهار على /$route"; ALIVE=0; }
+  kill "$LAUNCHER" 2>/dev/null
+  i=$((i + 1))
+done
+
+# ٣) الوضع الداكن.
+xcrun simctl ui "$UDID" appearance dark 2>/dev/null
+xcrun simctl launch --console-pty --terminate-running-process "$UDID" "$BUNDLE" -ManarSmokeRoute /prayer \
+  >> "$OUT/console.log" 2>&1 &
+LAUNCHER=$!
+sleep 9
+xcrun simctl io "$UDID" screenshot "$OUT/$(printf %02d $i)-prayer-dark.png" >/dev/null 2>&1
+kill "$LAUNCHER" 2>/dev/null
+xcrun simctl ui "$UDID" appearance light 2>/dev/null
 xcrun simctl terminate "$UDID" "$BUNDLE" 2>/dev/null
 
-echo "---- console (أوّل ٢٠٠ سطر) ----"
-head -200 "$OUT/console.log"
+echo "---- console (أوّل ١٢٠ سطراً) ----"
+head -120 "$OUT/console.log"
 FAIL=0
 if [ "$ALIVE" != 1 ]; then echo "::error::انهار التطبيق أو أُغلق أثناء الاختبار"; FAIL=1; fi
 if grep -E "\[error\]|Unhandled|TypeError|ReferenceError|SyntaxError" "$OUT/console.log" | grep -v "status bar\|system bars" > "$OUT/js-errors.log"; then

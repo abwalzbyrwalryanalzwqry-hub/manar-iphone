@@ -26,6 +26,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         win.rootViewController = ManarRootViewController()
         win.makeKeyAndVisible()
         window = win
+        #if DEBUG
+        // اختبار المحاكي (scripts/ios/smoke-test.sh): ‎`-ManarSmokeRoute /quran`‏ يفتح
+        // الشاشة بالمسار نفسه الذي يسلكه نقر إشعارٍ أطلق التطبيق من الإغلاق.
+        if let route = UserDefaults.standard.string(forKey: "ManarSmokeRoute"), !route.isEmpty {
+            ManarNotify.shared.openRoute(route)
+        }
+        #endif
         return true
     }
 
