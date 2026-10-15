@@ -22,7 +22,6 @@ import type { LocationState, Settings } from "@/lib/prayer";
 
 const root = resolve(__dirname, "../..");
 const read = (p: string) => readFileSync(resolve(root, p), "utf8");
-const java = (n: string) => read(`android/app/src/main/java/app/manar/islamic/${n}.java`);
 
 const SANAA: LocationState = { lat: 15.3694, lng: 44.191, city: "صنعاء", source: "manual" };
 const CALC: Settings = {
@@ -152,37 +151,9 @@ describe("ع٢ — التثويب أصلياً بعد أذان الفجر", () =
     );
     expect(silent?.follow).toBeUndefined();
   });
-
-  it("الخدمة تُسلسل المقطع بمشغّلٍ واحد، والكتم والإيقاف يُلغيانه", () => {
-    const svc = java("AdhanService");
-    expect(svc).toContain("EXTRA_FOLLOW");
-    expect(svc).toMatch(/onCompletion[\s\S]*currentFollow[\s\S]*startPlayback\(next/);
-    expect(svc).toMatch(/private void muteOnly[\s\S]*?currentFollow = "";/);
-    expect(svc).toMatch(/private void stopEverything[\s\S]*?currentFollow = "";/);
-    const sch = java("AdhanScheduler");
-    expect(sch).toContain('o.optString("follow", "")');
-    expect(sch).toContain('.put("follow", follow)');
-    expect(sch).toContain("EXTRA_FOLLOW, e.follow");
-    expect(java("AdhanAlarmReceiver")).toContain("EXTRA_FOLLOW");
-  });
 });
 
 describe("ع٣ — الاهتزاز يحكم الأذان والتنبيهات", () => {
-  it("الإعداد يصل إلى الخدمة الأصلية", () => {
-    expect(read("src/lib/native-notifications.ts")).toContain("vibrate: s.vibrationEnabled");
-    expect(java("ManarAdhanPlugin")).toContain("ManarVolumes.saveVibrate");
-    expect(java("AdhanService")).toContain("vibrateIfWanted(kind)");
-  });
-
-  it("قنوات الأذان/الإقامة بلا اهتزاز، وتختارها تنبيهات منار", () => {
-    const ch = java("ManarChannels");
-    expect(ch).toContain('"manar_adhan_nv"');
-    expect(ch).toContain('"manar_iqama_nv"');
-    expect(ch).toMatch(/adhanNv\.enableVibration\(false\)/);
-    expect(java("ManarNotices")).toContain("ManarChannels.notice(context, channelKind)");
-    expect(java("SakinahManager")).toContain("ManarChannels.isPrayerChannel(id)");
-  });
-
   it("قنوات التذكيرات لها نسخ `_nv` بلا اهتزاز", async () => {
     vi.resetModules();
     const n = await import("@/lib/native-notifications");
@@ -197,15 +168,6 @@ describe("ع٣ — الاهتزاز يحكم الأذان والتنبيهات",
   });
 });
 
-describe("ع٥ — زرّ الصوت يُسكت الأذان في وضع الاهتزاز", () => {
-  it("العبرة بتغيّر الرنين/عدم الإزعاج منذ البدء لا بحالهما", () => {
-    const svc = java("AdhanService");
-    expect(svc).toContain("snapshotQuietMode()");
-    expect(svc).toMatch(/ringer != startRingerMode \|\| filter != startInterruptionFilter/);
-    expect(svc).not.toMatch(/getRingerMode\(\) != AudioManager\.RINGER_MODE_NORMAL/);
-  });
-});
-
 describe("ع٦ — مفتاح «الصوت» ورقاقات الصلوات", () => {
   const page = read("src/routes/notifications.tsx");
   it("مفتاح الصوت يعكس soundEnabled وحده ويشرح الوضع الصامت", () => {
@@ -216,19 +178,6 @@ describe("ع٦ — مفتاح «الصوت» ورقاقات الصلوات", () 
     expect(page).toMatch(/master\[k\] \? "" : "opacity-40"/);
     expect(page).toContain('role="switch"');
     expect(page).toContain("aria-checked={on}");
-  });
-});
-
-describe("م٤/م٥ — التركيز والإيقاف", () => {
-  const svc = java("AdhanService");
-  it("CAN_DUCK يوقف مؤقتاً، والفقد الدائم كتمٌ يُبقي التنبيه", () => {
-    expect(svc).toContain("AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK");
-    expect(svc).toContain('muteOnly("focus-loss")');
-  });
-  it("الإيقاف يُبقي إشعار دخول الوقت صامتاً", () => {
-    expect(svc).toMatch(
-      /private void stopEverything[\s\S]*?currentWantsNotice[\s\S]*?ManarNotices\.post\([\s\S]*?true, currentMeta\);/,
-    );
   });
 });
 

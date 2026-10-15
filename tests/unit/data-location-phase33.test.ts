@@ -27,11 +27,10 @@ import {
   zoneMismatch,
   zoneOffsetMinutes,
 } from "@/lib/place-timezone";
-import { geolocationErrorAr, nominatimReverseUrl, type Settings } from "@/lib/prayer";
+import { geolocationErrorAr, nominatimReverseUrl } from "@/lib/prayer";
 import { ARAB_COUNTRIES } from "@/lib/arab-places";
 import { CITIES } from "@/lib/cities";
 import { BACKUP_KEYS, DEVICE_ONLY_KEYS } from "@/lib/local-backup";
-import { buildWidgetSnapshot } from "@/lib/widget-snapshot";
 
 const root = resolve(__dirname, "../..");
 const read = (p: string) => readFileSync(resolve(root, p), "utf8");
@@ -123,24 +122,6 @@ describe("اليوم الهجري عند المغرب", () => {
     expect(BACKUP_KEYS).toContain("manar.hijri.at-maghrib.v1");
     expect(DEVICE_ONLY_KEYS.has("manar.zone-banner.dismissed.v1")).toBe(true);
   });
-  it("الويدجت: تاريخ الغد الهجري من مغرب اليوم", () => {
-    const calc: Settings = {
-      method: "UmmAlQura",
-      madhab: "shafi",
-      offsets: { fajr: 0, sunrise: 0, dhuhr: 0, asr: 0, maghrib: 0, isha: 0 },
-      dstOffset: 0,
-    };
-    const loc = { lat: 15.3694, lng: 44.191, city: "صنعاء", source: "manual" as const };
-    const from = new Date(2026, 8, 28, 12);
-    const on = buildWidgetSnapshot({ location: loc, settings: calc, from, hijriAtMaghrib: true });
-    const off = buildWidgetSnapshot({ location: loc, settings: calc, from });
-    expect(off.days[0].hijriEvening).toBeUndefined();
-    expect(on.days[0].hijriEvening).toBe(off.days[1].hijri);
-    expect(Math.abs((on.days[0].hijriFrom ?? 0) - from.getTime())).toBeLessThan(DAY);
-    const java = read("android/app/src/main/java/app/manar/islamic/ManarWidget.java");
-    expect(java).toMatch(/if \(from > 0 && now >= from && !evening\.isEmpty\(\)\) return evening;/);
-    expect(java).toContain("String hijri = hijriFor(shown, now);");
-  });
 });
 
 describe("المنطقة الزمنية للموقع", () => {
@@ -203,15 +184,6 @@ describe("المنطقة الزمنية للموقع", () => {
     expect(hoursPhrase(210)).toBe("3 ساعات ونصف");
     expect(hoursPhrase(30)).toBe("نصف ساعة");
     expect(gmtLabel(-330)).toBe("غرينتش−5:30");
-  });
-
-  it("الشارة في الرئيسية والمواقيت، وزر إعدادات الوقت في أندرويد", () => {
-    for (const r of ["src/routes/_tabs.home.tsx", "src/routes/_tabs.prayer.tsx"])
-      expect(read(r)).toContain("<ZoneMismatchBanner />");
-    const plugin = read("android/app/src/main/java/app/manar/islamic/ManarAdhanPlugin.java");
-    expect(plugin).toMatch(
-      /public void openDateSettings\(PluginCall call\)[\s\S]*?ACTION_DATE_SETTINGS/,
-    );
   });
 });
 

@@ -307,7 +307,7 @@ function RecitationsScreen() {
       <div className="px-5">
         {!offlineSupported() && (
           <div className="rounded-3xl border border-border/60 bg-card/70 p-4 text-[11px] leading-relaxed text-muted-foreground shadow-soft backdrop-blur-xl">
-            تحميل السور متاح في تطبيق الأندرويد. في المتصفح يعمل التشغيل عبر البث المباشر فقط.
+            تحميل السور متاح في تطبيق منار للآيفون. في المتصفح يعمل التشغيل عبر البث المباشر فقط.
           </div>
         )}
 

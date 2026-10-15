@@ -1,7 +1,7 @@
 {
   "$schema": "https://unpkg.com/knip@6/schema.json",
   "entry": ["scripts/**/*.mjs"],
-  "ignore": ["public/**"],
+  "ignore": ["public/**", "scripts/**/*.d.mts"],
   "ignoreDependencies": ["@tanstack/router-plugin", "acorn"],
   "rules": {
     "exports": "off",
@@ -9,5 +9,5 @@
     "duplicates": "off",
     "enumMembers": "off"
   },
-  "ignoreBinaries": ["ffmpeg"]
+  "ignoreBinaries": ["ffmpeg", "ffprobe", "xcodegen"]
 }

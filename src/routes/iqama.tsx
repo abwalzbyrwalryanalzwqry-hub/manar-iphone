@@ -142,7 +142,7 @@ function IqamaSettings() {
         // على الويب لا إشعارات أصلية: نُسمع الصوت الفعلي لإقامة هذه الصلاة.
         previewIqama(settings.perPrayerIqama[p] ?? settings.iqamaVariant);
         toast(`إقامة ${prayerLabelOn(p, new Date())} — تجربة`, {
-          description: "الإشعار الفعلي يصل في تطبيق أندرويد",
+          description: "الإشعار الفعلي يصل في تطبيق منار للآيفون",
         });
       }
     } finally {

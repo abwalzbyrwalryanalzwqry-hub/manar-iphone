@@ -4,6 +4,7 @@
  * القنوات، سجل التنبيهات) إلى جُملٍ عربية، فتُختبر بلا أندرويد.
  */
 
+import { isIOSApp } from "@/lib/ios";
 import { PRAYER_LABELS, type PrayerKey } from "@/lib/prayer";
 import { minutesAr } from "@/lib/notification-text";
 import { countAr, toArabicDigits } from "@/lib/format";
@@ -209,6 +210,9 @@ export function testVerdictText(v: TestVerdict): string {
     case "written":
       return `وصل إشعاراً مكتوباً: ${v.why}.`;
     case "missed":
+      if (isIOSApp()) {
+        return "لم يصل بعد دقيقتين من موعده. تحقّق من الإعدادات ← منار ← الإشعارات: «السماح بالإشعارات» و«الأصوات» مفعّلان، وأن «التركيز» لا يحجب منار.";
+      }
       return "لم يُطلق بعد دقيقتين من موعده. الغالب أن النظام قتل منار: استثنِها من توفير البطارية.";
   }
 }

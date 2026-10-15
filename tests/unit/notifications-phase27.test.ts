@@ -7,7 +7,6 @@ import { afterEach, describe, expect, it } from "vitest";
 
 import { __setDisplayForTests } from "@/lib/display-prefs";
 import {
-  SILENCE_REASONS,
   agoAr,
   daysAr,
   durationAr,
@@ -97,19 +96,6 @@ describe("التنبيه قبل الصلاة", () => {
     }
     // منذ المرحلة ٢٨ يُبنى التنبيه قبل الصلاة في الجدول الموحّد وحده.
     expect(read("src/lib/prayer-schedule.ts")).toContain("body: prePrayerBody(m, label)");
-  });
-});
-
-describe("أسباب الصمت", () => {
-  const svc = read("android/app/src/main/java/app/manar/islamic/AdhanService.java");
-  it("نصوص Java مطابقة لـSILENCE_REASONS", () => {
-    for (const text of Object.values(SILENCE_REASONS)) expect(svc).toContain(`"${text}"`);
-  });
-  it("لا «تم كتم الصوت» في نصٍّ ظاهر، وكل صمتٍ بسببه", () => {
-    expect(svc).not.toMatch(/"تم كتم الصوت"/);
-    expect(svc).not.toContain("postSilentNotice();");
-    expect(svc).toContain("postSilentNotice(REASON_SAKINAH)");
-    expect(svc).toContain("postSilentNotice(REASON_FOCUS)");
   });
 });
 

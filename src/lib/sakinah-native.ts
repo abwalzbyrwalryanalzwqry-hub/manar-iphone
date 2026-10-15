@@ -7,6 +7,7 @@
  * `native-notifications.ts`.
  */
 
+import { isIOSApp } from "@/lib/ios";
 import {
   isNativeShell,
   manarAdhanPlugin,
@@ -195,17 +196,27 @@ export async function runSakinahSelfTest(
     };
   }
 
+  const ios = isIOSApp();
   const checks: SakinahCheck[] = [
-    {
-      key: "dnd",
-      title: "التحكم في وضع عدم الإزعاج",
-      ok: status.dndAccess,
-      blocking: true,
-      detail: status.dndAccess
-        ? "منار يستطيع إسكات الهاتف أثناء الصلاة ثم إعادته كما كان."
-        : "بدون هذا الإذن لا يستطيع أي تطبيق إسكات الهاتف. امنح منار «الوصول إلى عدم الإزعاج».",
-      fix: status.dndAccess ? undefined : "dnd",
-    },
+    ios
+      ? {
+          key: "dnd",
+          title: "الإسكات على iPhone",
+          ok: true,
+          blocking: false,
+          detail:
+            "iOS لا يسمح لأي تطبيق بتشغيل «عدم الإزعاج»؛ تذكّرك سكينة بتفعيل «التركيز» عند كل فترة وتكتم أصوات منار.",
+        }
+      : {
+          key: "dnd",
+          title: "التحكم في وضع عدم الإزعاج",
+          ok: status.dndAccess,
+          blocking: true,
+          detail: status.dndAccess
+            ? "منار يستطيع إسكات الهاتف أثناء الصلاة ثم إعادته كما كان."
+            : "بدون هذا الإذن لا يستطيع أي تطبيق إسكات الهاتف. امنح منار «الوصول إلى عدم الإزعاج».",
+          fix: status.dndAccess ? undefined : "dnd",
+        },
     {
       key: "exact",
       title: "التنبيهات في وقتها بالضبط",

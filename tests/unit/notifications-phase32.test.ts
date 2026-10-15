@@ -16,7 +16,6 @@ import type { LocationState, Settings } from "@/lib/prayer";
 
 const root = resolve(__dirname, "../..");
 const read = (p: string) => readFileSync(resolve(root, p), "utf8");
-const java = (n: string) => read(`android/app/src/main/java/app/manar/islamic/${n}.java`);
 
 const SANAA: LocationState = { lat: 15.3694, lng: 44.191, city: "صنعاء", source: "manual" };
 const CALC: Settings = {
@@ -105,50 +104,6 @@ describe("المحرّك يوسم لحظات الصلاة وحدها بالأو�
   });
 });
 
-describe("أندرويد: AdhanScheduler.armExact", () => {
-  const sched = java("AdhanScheduler");
-  const arm = sched.slice(sched.indexOf("static String armExact("));
-
-  it("الأولوية تُضبط بـsetAlarmClock مع نيّة عرضٍ تفتح /prayer", () => {
-    expect(arm).toMatch(
-      /if \(priority\)[\s\S]*?am\.setAlarmClock\(new AlarmManager\.AlarmClockInfo\(at, show\), pi\)/,
-    );
-    expect(arm).toContain('ManarNotices.openIntent(context, SHOW_REQUEST, "/prayer")');
-  });
-
-  it("السلّم: بلا إذن دقيق ← غير دقيق؛ فشل setAlarmClock ← دقيق ثم غير دقيق", () => {
-    expect(arm).toMatch(
-      /if \(!exactAllowed\) \{[\s\S]*?setInexact\(am, at, pi\);[\s\S]*?MODE_INEXACT/,
-    );
-    expect(arm).toMatch(
-      /catch \(RuntimeException e\)[\s\S]*?setExactAndAllowWhileIdle[\s\S]*?catch \(SecurityException/,
-    );
-  });
-
-  it("armWindow يمرّ به ويعدّ ما ضُبط بأولوية للسجل", () => {
-    expect(sched).toContain("armExact(context, am, e.atMillis, pi, e.priority)");
-    expect(sched).toMatch(/ManarLog\.SCHEDULED[\s\S]*?"\/" \+ lastClockArmed/);
-    // لا setAlarm قديم يتجاوز السلّم.
-    expect(sched).not.toMatch(/private static void setAlarm\(/);
-  });
-
-  it("الحقل يُحفظ ويُستعاد؛ الجدول القديم بلا الحقل: الأذان والإقامة بأولوية", () => {
-    expect(sched).toContain('.put("priority", priority)');
-    expect(sched).toMatch(/o\.has\("priority"\)[\s\S]*?defaultPriority\(/);
-    expect(sched).toMatch(
-      /static boolean defaultPriority\(String kind\) \{\s*return KIND_ADHAN\.equals\(kind\) \|\| KIND_IQAMA\.equals\(kind\);/,
-    );
-  });
-
-  it("«تجربة شاملة» تسلك المسار نفسه وتسجّل الطريقة", () => {
-    const plugin = java("ManarAdhanPlugin");
-    const test = plugin.slice(plugin.indexOf("public void testAlarm("));
-    expect(test).toContain("AdhanScheduler.armExact(context, am, at, pi, priority)");
-    expect(test).toContain("ManarLog.TEST_SCHEDULED, key, mode");
-    expect(read("src/lib/native-notifications.ts")).toContain("priority: s.alarmClockPriority");
-  });
-});
-
 describe("سجل التنبيهات يذكر أولوية المنبّه", () => {
   it("الجدولة", () => {
     const line = describeLogEvent({ at: 0, type: "scheduled", key: "", detail: "40/30/exact/12" });
@@ -163,21 +118,5 @@ describe("سجل التنبيهات يذكر أولوية المنبّه", () =>
     expect(describeLogEvent({ at: 0, type: "test_scheduled", key: "t", detail: "clock" })).toBe(
       "ضُبطت تجربة شاملة بأولوية المنبّه",
     );
-  });
-});
-
-describe("البيان (Manifest)", () => {
-  const manifest = read("android/app/src/main/AndroidManifest.xml");
-  it("الرجوع التنبّئي مفعّل — الرجوع يمرّ من OnBackPressedDispatcher", () => {
-    expect(manifest).toContain('android:enableOnBackInvokedCallback="true"');
-    const appPlugin = read(
-      "node_modules/@capacitor/app/android/src/main/java/com/capacitorjs/plugins/app/AppPlugin.java",
-    );
-    expect(appPlugin).toContain("getOnBackPressedDispatcher().addCallback");
-  });
-  it("تعليق الإنترنت يطابق الاستعمال الفعلي", () => {
-    expect(manifest).not.toContain("cloud sync");
-    expect(manifest).toContain("Nominatim");
-    expect(manifest).toContain("everyayah");
   });
 });

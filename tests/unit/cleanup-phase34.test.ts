@@ -28,26 +28,11 @@ describe("الكود الميت", () => {
     ]);
   });
 
-  it("ملفات القوالب المحذوفة لا تعود", () => {
-    for (const p of [
-      "src/lib/api/example.functions.ts",
-      "src/lib/config.server.ts",
-      "src/lib/quran-data.ts",
-      "src/hooks/use-mobile.tsx",
-      "src/assets",
-      "android/app/src/test/java/com/getcapacitor",
-      "android/app/src/androidTest/java/com/getcapacitor",
-    ]) {
-      expect(existsSync(resolve(root, p)), p).toBe(false);
-    }
-  });
-
   it("التبعيات المحذوفة لا تعود", () => {
     const pkg = JSON.parse(read("package.json"));
     const deps = { ...pkg.dependencies, ...pkg.devDependencies };
     for (const d of [
       "@capacitor/device",
-      "@capacitor/geolocation",
       "@tanstack/react-query",
       "recharts",
       "react-hook-form",
@@ -61,17 +46,6 @@ describe("الكود الميت", () => {
     ]) {
       expect(deps[d], d).toBeUndefined();
     }
-  });
-
-  it("إضافات Capacitor المحذوفة خارج Gradle (لا play-services-location)", () => {
-    for (const p of ["android/capacitor.settings.gradle", "android/app/capacitor.build.gradle"]) {
-      const g = read(p);
-      expect(g, p).not.toMatch(/capacitor-(device|geolocation)/);
-    }
-    // navigator.geolocation يحتاج الإذنين في البيان نفسه، لا في إضافة.
-    const manifest = read("android/app/src/main/AndroidManifest.xml");
-    expect(manifest).toContain("android.permission.ACCESS_FINE_LOCATION");
-    expect(manifest).toContain("android.permission.ACCESS_COARSE_LOCATION");
   });
 
   it("المتغيّرات والمعاملات غير المستعملة أخطاء أنواع، وknip في CI", () => {

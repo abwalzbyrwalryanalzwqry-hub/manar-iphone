@@ -19,7 +19,6 @@ import type { LocationState, Settings } from "@/lib/prayer";
 
 const root = resolve(__dirname, "../..");
 const read = (p: string) => readFileSync(resolve(root, p), "utf8");
-const java = (n: string) => read(`android/app/src/main/java/app/manar/islamic/${n}.java`);
 
 const SANAA: LocationState = { lat: 15.3694, lng: 44.191, city: "صنعاء", source: "manual" };
 const CALC: Settings = {
@@ -141,27 +140,6 @@ describe("تنبيه التجديد يسبق أقصر جدول", () => {
     expect(days).toBeLessThan(plan.day + 2);
     const def = build(maxed()).find((e) => e.role === "renew")!;
     expect((def.at - NOW) / DAY).toBeGreaterThan(ADHAN_DAYS_AHEAD - 4);
-  });
-});
-
-describe("الطبقة الأصلية تنشر التنبيه على قناته", () => {
-  it("ManarChannels.notice يقبل معرّف قناة كاملاً ويحتاط بقناة التذكيرات", () => {
-    const ch = java("ManarChannels");
-    expect(ch).toMatch(/kind\.startsWith\("manar_"\)\) return existing\(context, kind\)/);
-    expect(ch).toMatch(/getNotificationChannel\(id\) != null\) return id;\s*return REMINDERS;/);
-  });
-});
-
-describe("م٦ — تغيّر المنطقة الزمنية", () => {
-  it("يُحفظ فرق التوقيت مع الجدول، وينبّه BootReceiver إن تغيّر فعلاً", () => {
-    const sch = java("AdhanScheduler");
-    expect(sch).toContain("KEY_ZONE_OFFSET");
-    expect(sch).toContain("zoneChangedSinceSchedule");
-    expect(sch).toContain("تغيّرت منطقتك الزمنية");
-    const boot = java("BootReceiver");
-    expect(boot).toMatch(
-      /ACTION_TIMEZONE_CHANGED\.equals\(action\)\s*&& AdhanScheduler\.zoneChangedSinceSchedule/,
-    );
   });
 });
 

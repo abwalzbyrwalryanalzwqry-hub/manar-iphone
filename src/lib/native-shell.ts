@@ -30,6 +30,7 @@
  * `window.Capacitor.Plugins`.
  */
 
+import { isIOSApp } from "@/lib/ios";
 import { Capacitor } from "@capacitor/core";
 import { App, type BackButtonListenerEvent } from "@capacitor/app";
 import { SplashScreen } from "@capacitor/splash-screen";
@@ -151,10 +152,28 @@ export function setupBackButton(onHint: (message: string) => void): () => void {
 /** Matches the status bar to the app's current light/dark surface. */
 export async function applyStatusBar(dark: boolean): Promise<void> {
   if (!isNativeApp()) return;
+  const surface = dark ? "#0B1117" : "#F8F9FA";
+  if (isIOSApp()) {
+    /* iOS: لا setOverlaysWebView ولا setBackgroundColor (أندرويد فقط — كانت
+     * ترمي فيسقط setStyle بعدها). الواجهة داخل المنطقة الآمنة، وما حولها
+     * (خلف شريط الحالة ومؤشّر الرئيسية) يُلوَّن أصلياً بلون السطح نفسه. */
+    try {
+      await StatusBar.setStyle({ style: dark ? Style.Dark : Style.Light });
+    } catch (error) {
+      console.warn("[manar] status bar style unavailable", error);
+    }
+    try {
+      const { manarAdhanPlugin } = await import("@/lib/native-notifications");
+      await manarAdhanPlugin()?.setSystemBars?.({ color: surface });
+    } catch (error) {
+      console.warn("[manar] system bars color unavailable", error);
+    }
+    return;
+  }
   try {
     await StatusBar.setOverlaysWebView({ overlay: false });
     await StatusBar.setStyle({ style: dark ? Style.Dark : Style.Light });
-    await StatusBar.setBackgroundColor({ color: dark ? "#0B1117" : "#F8F9FA" });
+    await StatusBar.setBackgroundColor({ color: surface });
   } catch (error) {
     // Status-bar styling is cosmetic — log it, never block start-up on it.
     console.warn("[manar] status bar styling unavailable", error);

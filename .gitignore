@@ -36,15 +36,14 @@ dist-ssr
 .env.*
 !.env.example
 
-# Android build output and signing material
-android/.gradle/
-android/build/
-android/app/build/
-android/app/src/main/assets/public/
-android/app/src/main/res/raw/
-android/keystore.properties
-android/*.keystore
-android/*.jks
+# مخرجات iOS المولَّدة (تُعاد في كل بناء: npm run build:ios && npm run ios:project)
+ios/App/App.xcodeproj/
+ios/App/App/ManarAudio/
+ios/App/CapApp-SPM/.build/
+build/
+*.ipa
+*.p12
+*.mobileprovision
 .icon-preview/
 
 # ملفات بايثون المؤقتة

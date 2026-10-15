@@ -14,8 +14,15 @@ src/lib/arab-places.ts
 src/lib/wird/hisn-texts.ts
 
 # بيانات القرآن والتفسير — مُصغَّرة عن قصد: كل بايت إضافي يُحمَّل على الجهاز
-# ويُنقل داخل الـAPK. لا تُنسَّق.
+# ويُنقل داخل التطبيق. لا تُنسَّق.
 public/data
 
 # مولَّد آلياً من GeoNames عبر scripts/build-world-cities.py
 src/lib/world-cities.ts
+
+# مولَّد آلياً بـ cap sync / XcodeGen
+ios/App/App/capacitor.config.json
+ios/App/App/public
+ios/App/CapApp-SPM
+ios/App/App.xcodeproj
+build

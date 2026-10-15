@@ -1,0 +1,116 @@
+# منار ايفون — تعريف مشروع Xcode (يولّده XcodeGen).
+#
+# لا يُحفظ App.xcodeproj في المستودع: يُولَّد من هذا الملف حرفياً في كل بناء
+# (`npm run ios:project`)، فلا تتعارض تعديلات Xcode اليدوية ولا تنكسر المراجعة.
+#
+# المصدر الواحد لرقم الإصدار هو package.json؛ يمرّره سكربت البناء عبر
+# MANAR_MARKETING_VERSION و MANAR_BUILD_NUMBER.
+name: App
+options:
+  bundleIdPrefix: app.manar
+  developmentLanguage: ar
+  deploymentTarget:
+    iOS: "15.0"
+  createIntermediateGroups: true
+  groupSortPosition: top
+  generateEmptyDirectories: true
+
+settings:
+  base:
+    MARKETING_VERSION: ${MANAR_MARKETING_VERSION}
+    CURRENT_PROJECT_VERSION: ${MANAR_BUILD_NUMBER}
+    SWIFT_VERSION: "5.0"
+    TARGETED_DEVICE_FAMILY: "1"
+    IPHONEOS_DEPLOYMENT_TARGET: "15.0"
+    ENABLE_BITCODE: NO
+    CODE_SIGN_STYLE: Automatic
+    DEVELOPMENT_TEAM: ${MANAR_TEAM_ID}
+    ENABLE_USER_SCRIPT_SANDBOXING: NO
+    DEAD_CODE_STRIPPING: YES
+    SWIFT_TREAT_WARNINGS_AS_ERRORS: NO
+
+packages:
+  CapApp-SPM:
+    path: CapApp-SPM
+
+targets:
+  App:
+    type: application
+    platform: iOS
+    deploymentTarget: "15.0"
+    sources:
+      - path: App
+        excludes:
+          - "public"
+          - "ManarAudio"
+          - "ManarSounds"
+          - "capacitor.config.json"
+          - "config.xml"
+          - "*.entitlements"
+      - path: App/public
+        type: folder
+        buildPhase: resources
+      - path: App/ManarAudio
+        type: folder
+        buildPhase: resources
+      - path: App/ManarSounds
+        type: folder
+        buildPhase: resources
+      - path: App/capacitor.config.json
+        buildPhase: resources
+      - path: App/config.xml
+        buildPhase: resources
+    dependencies:
+      - package: CapApp-SPM
+        product: CapApp-SPM
+      - target: ManarWidget
+        embed: true
+        codeSign: true
+      - sdk: WidgetKit.framework
+      - sdk: BackgroundTasks.framework
+      - sdk: UserNotifications.framework
+      - sdk: AVFoundation.framework
+      - sdk: MediaPlayer.framework
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: app.manar.islamic
+        PRODUCT_NAME: App
+        INFOPLIST_FILE: App/Info.plist
+        CODE_SIGN_ENTITLEMENTS: App/App.entitlements
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+        ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME: AccentColor
+        LD_RUNPATH_SEARCH_PATHS: "$(inherited) @executable_path/Frameworks"
+        SUPPORTS_MACCATALYST: NO
+        SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD: NO
+
+  ManarWidget:
+    type: app-extension
+    platform: iOS
+    deploymentTarget: "15.0"
+    sources:
+      - path: ManarWidget
+        excludes:
+          - "*.entitlements"
+    dependencies:
+      - sdk: WidgetKit.framework
+      - sdk: SwiftUI.framework
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: app.manar.islamic.widget
+        PRODUCT_NAME: ManarWidget
+        INFOPLIST_FILE: ManarWidget/Info.plist
+        CODE_SIGN_ENTITLEMENTS: ManarWidget/ManarWidget.entitlements
+        LD_RUNPATH_SEARCH_PATHS: "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks"
+        SKIP_INSTALL: YES
+        APPLICATION_EXTENSION_API_ONLY: YES
+
+schemes:
+  App:
+    build:
+      targets:
+        App: all
+        ManarWidget: all
+    run:
+      config: Debug
+    archive:
+      config: Release

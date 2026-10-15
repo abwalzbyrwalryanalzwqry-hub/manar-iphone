@@ -43,15 +43,11 @@ import {
 } from "@/lib/seasons/summary";
 import { widgetSeasonLine } from "@/lib/seasons/widget-line";
 import type { Season } from "@/lib/seasons/types";
-import { normalizeSettings, type LocationState } from "@/lib/prayer";
-import { buildWidgetSnapshot } from "@/lib/widget-snapshot";
-import { normalizeWidgetOptions } from "@/lib/widget-settings";
 
 const root = resolve(__dirname, "../..");
 const read = (p: string) => readFileSync(resolve(root, p), "utf8");
 const H = (year: number, month: number, day: number) => fromHijri({ year, month, day });
 const S = (id: string): Season => findSeason(id)!;
-const SANAA: LocationState = { lat: 15.3694, lng: 44.191, city: "صنعاء", source: "manual" };
 const same = (a: Date, b: Date) => dayKey(a) === dayKey(b);
 
 afterEach(() => __resetHijriMonthStartsForTests());
@@ -251,20 +247,6 @@ describe("٤.٧ الموسم في الويدجت", () => {
     );
     expect(widgetSeasonLine(H(1447, 12, 5), 0, "٦:٠٠ م")).toBe("اليوم ٥ من ذي الحجة");
     expect(widgetSeasonLine(H(1447, 5, 10), 0)).toBeUndefined();
-  });
-
-  it("اللقطة تحمل سطر الموسم، والطبقة الأصلية تعرضه", () => {
-    const snap = buildWidgetSnapshot({
-      location: SANAA,
-      settings: normalizeSettings({}),
-      from: H(1447, 9, 12),
-      days: 2,
-    });
-    expect(snap.days[0].season).toMatch(/^اليوم ١٢ من رمضان · الإفطار /);
-    expect(normalizeWidgetOptions({}).season).toBe(true);
-    const java = read("android/app/src/main/java/app/manar/islamic/ManarWidget.java");
-    expect(java).toContain('optString("season"');
-    expect(java).toContain('optBoolean("season", true)');
   });
 });
 

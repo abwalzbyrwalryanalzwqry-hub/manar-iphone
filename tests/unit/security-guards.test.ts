@@ -25,22 +25,18 @@ describe("لا خدمة سحابية", () => {
   });
 
   it("لا متغيرات Supabase في البناء", () => {
-    expect(read(".github/workflows/android.yml")).not.toMatch(/SUPABASE/);
+    expect(read(".github/workflows/ios.yml")).not.toMatch(/SUPABASE/);
     expect(read("src/start.ts")).not.toMatch(/supabase/i);
     expect(read("vite.config.capacitor.ts")).not.toMatch(/supabase/i);
   });
 });
 
 describe("توقيع الإصدار", () => {
-  it("Gradle يوقف البناء عند اشتراط المفتاح وغيابه", () => {
-    const gradle = read("android/app/build.gradle");
-    expect(gradle).toContain('System.getenv("MANAR_REQUIRE_RELEASE_SIGNING")');
-    expect(gradle).toContain("throw new GradleException");
-  });
-
-  it("خطوة الإصدار الموقَّع في CI تشترط المفتاح", () => {
-    expect(read(".github/workflows/android.yml")).toContain(
-      'MANAR_REQUIRE_RELEASE_SIGNING: "true"',
-    );
+  it("توقيع Ad Hoc في CI مشروط بوجود الشهادة، ولا أسرار في المستودع", () => {
+    const wf = read(".github/workflows/ios.yml");
+    expect(wf).toContain("IOS_CERT_P12_BASE64");
+    expect(wf).toContain("HAS_IOS_SIGNING: ${{ secrets.IOS_CERT_P12_BASE64 != '' }}");
+    expect(wf).toContain("if: env.HAS_IOS_SIGNING == 'true'");
+    expect(read("scripts/ios/sign-ipa.sh")).toContain("security delete-keychain");
   });
 });

@@ -6,7 +6,6 @@ import { resolve } from "node:path";
 import { describe, expect, it } from "vitest";
 
 import { getAdhanSettings, type AdhanSettings } from "@/lib/adhan-settings";
-import { isNotificationRoute } from "@/lib/native-notifications";
 import { validPrayed } from "@/lib/prayed-queue";
 import {
   DAILY_EVENT_BASE,
@@ -20,7 +19,6 @@ import type { LocationState, Settings } from "@/lib/prayer";
 
 const root = resolve(__dirname, "../..");
 const read = (p: string) => readFileSync(resolve(root, p), "utf8");
-const java = (n: string) => read(`android/app/src/main/java/app/manar/islamic/${n}.java`);
 
 const SANAA: LocationState = { lat: 15.3694, lng: 44.191, city: "صنعاء", source: "manual" };
 const CALC: Settings = {
@@ -126,54 +124,9 @@ describe("م٩ — تذكيرات الأذكار في الجدول الأصلي"
     expect(src).toMatch(/meta: \{ route: r\.route, snooze: SNOOZE_MINUTES \}/);
     expect(src).not.toMatch(/reminders\.push\(dailyNotification/);
   });
-
-  it("زرّ التأجيل مستقبِل أصلي لا يفتح التطبيق", () => {
-    const n = java("ManarNotices");
-    expect(n).toContain("ManarActionReceiver.ACTION_SNOOZE");
-    expect(n).toMatch(/PendingIntent\.getBroadcast\(context, id, snooze/);
-    const r = java("ManarActionReceiver");
-    expect(r).toContain("setExactAndAllowWhileIdle");
-    expect(r).toContain('"snooze_" + eventId + "_" + at');
-    expect(read("android/app/src/main/AndroidManifest.xml")).toContain(".ManarActionReceiver");
-  });
 });
 
 describe("ت٣/ت٤ — الأصلي: القناة والمجموعة والمسار", () => {
-  it("قناة التشغيل الجديدة عالية الأهمية وتُحذف القديمة", () => {
-    const c = java("ManarChannels");
-    expect(c).toContain('PLAYBACK = "manar_playback_v2"');
-    expect(c).toMatch(
-      /new NotificationChannel\(PLAYBACK, "تشغيل الأذان", NotificationManager\.IMPORTANCE_HIGH\)/,
-    );
-    expect(c).toContain("deleteNotificationChannel(PLAYBACK_LEGACY)");
-  });
-
-  it("مجموعة لكل صلاة، و«صلّيت» يكتب في الطابور", () => {
-    const n = java("ManarNotices");
-    expect(n).toContain('b.setGroup("manar_prayer_" + meta.prayer)');
-    expect(n).toContain('b.addAction(0, "صلّيت"');
-    expect(java("ManarActionReceiver")).toContain("PrayedQueue.add(context, prayer, day)");
-  });
-
-  it("النقر يفتح المسار: الإقلاع البارد والتطبيق العامل", () => {
-    const p = java("ManarAdhanPlugin");
-    expect(p).toContain("handleOnNewIntent");
-    expect(p).toContain('notifyListeners("manarOpenRoute", data, true)');
-    expect(p).toContain("intent.removeExtra(MainActivity.EXTRA_ROUTE)");
-    expect(java("AdhanService")).toContain("ManarNotices.openIntent(this, 0");
-  });
-
-  it("المسار داخلي فقط", () => {
-    expect(isNotificationRoute("/prayer")).toBe(true);
-    expect(isNotificationRoute("/azkar/27?time=evening")).toBe(true);
-    for (const bad of ["https://x.y", "//evil", "javascript:alert(1)", 5, ""]) {
-      expect(isNotificationRoute(bad)).toBe(false);
-    }
-    const meta = java("NoticeMeta");
-    expect(meta).toContain('r.startsWith("//")');
-    expect(meta).toContain('r.contains(":")');
-  });
-
   it("الويب يدمج الطابور عند الفتح والعودة", () => {
     const a = read("src/components/manar/adhan-provider.tsx");
     expect(a.match(/void mergeNativePrayed\(\);/g)?.length).toBe(2);

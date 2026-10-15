@@ -20,7 +20,6 @@ import { countAr } from "@/lib/format";
 
 const root = resolve(__dirname, "../..");
 const read = (p: string) => readFileSync(resolve(root, p), "utf8");
-const java = (n: string) => read(`android/app/src/main/java/app/manar/islamic/${n}.java`);
 
 describe("التنبيه القادم", () => {
   it("يسمّي الحدث من مفتاحه", () => {
@@ -59,13 +58,6 @@ describe("م١١ — القنوات المطفأة", () => {
       ]),
     ).toBe("أطفأت قناة «الأذان» من إعدادات النظام — تنبيهاتها لا تظهر.");
     expect(blockedChannelsMessage([])).toBeNull();
-  });
-
-  it("الأصلي يعيد أهمية كل قناة لمنار", () => {
-    const p = java("ManarAdhanPlugin");
-    expect(p).toContain("public void channelStatus(PluginCall call)");
-    expect(p).toContain("IMPORTANCE_NONE");
-    expect(p).toContain('startsWith("manar_")');
   });
 });
 
@@ -106,16 +98,6 @@ describe("ت٥ — سجل التنبيهات", () => {
     expect(lines[0]).toContain("٢٠٢٦-٠٩-٢٣");
     expect(lines[1]).toContain("تكرّر");
   });
-
-  it("الأصلي: حلقة ٢٠٠ ونقاط التسجيل", () => {
-    expect(java("ManarLog")).toContain("LIMIT = 200");
-    expect(java("AdhanAlarmReceiver")).toContain("ManarLog.FIRED");
-    expect(java("AdhanAlarmReceiver")).toContain("ManarLog.PLAYBACK_FAILED");
-    expect(java("AdhanService")).toContain("ManarLog.SILENCED");
-    expect(java("AdhanScheduler")).toContain("ManarLog.SCHEDULED");
-    expect(java("AdhanScheduler")).toContain(".putExtra(EXTRA_AT, e.atMillis)");
-    expect(java("BootReceiver")).toContain("ManarLog.REARMED");
-  });
 });
 
 describe("ت١ — تجربة شاملة", () => {
@@ -138,16 +120,6 @@ describe("ت١ — تجربة شاملة", () => {
     );
     expect(w.state).toBe("written");
     expect(testVerdictText(w)).toContain("المنبّهات الدقيقة");
-  });
-
-  it("منبّه حقيقي بالمسار نفسه بعد دقيقة", () => {
-    const p = java("ManarAdhanPlugin");
-    expect(p).toContain("public void testAlarm(PluginCall call)");
-    expect(p).toContain('call.getInt("seconds", 60)');
-    // المرحلة ٣٢: سلّم الضبط نفسه للأذان المجدول (setAlarmClock ← دقيق ← غير دقيق).
-    expect(p).toContain("AdhanScheduler.armExact(context, am, at, pi, priority)");
-    expect(p).toContain("AdhanAlarmReceiver.ACTION_FIRE");
-    expect(read("src/lib/native-notifications.ts")).toContain("seconds: 60");
   });
 });
 

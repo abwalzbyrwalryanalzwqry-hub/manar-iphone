@@ -1,0 +1,139 @@
+name: بناء iPhone (IPA)
+
+# منار ايفون — يبني التطبيق على macOS بـ Xcode، ويختبر تشغيله على محاكي iPhone
+# (صور لكل شاشة + سجلّ أخطاء JavaScript)، ثم يُخرج ملف IPA للتوزيع المحدود:
+#   • Manar-iPhone.ipa        غير موقَّع — يُثبَّت بـ AltStore / SideStore / Sideloadly
+#   • Manar-iPhone-adhoc.ipa  موقَّع Ad Hoc — فقط إن وُجدت أسرار IOS_* (حساب مدفوع)
+# عند وسم v* يُنشأ إصدار GitHub (Release) مرفقاً به الملف.
+
+on:
+  push:
+    branches: [main]
+    tags: ["v*"]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ios-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  ios:
+    name: Xcode — محاكي + IPA
+    runs-on: macos-15
+    timeout-minutes: 60
+    env:
+      HAS_IOS_SIGNING: ${{ secrets.IOS_CERT_P12_BASE64 != '' }}
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+
+      # سكربت الخطوط يستعمل sha256sum (GNU)؛ في macOS المكافئ shasum -a 256.
+      - name: sha256sum على macOS
+        run: |
+          if ! command -v sha256sum >/dev/null; then
+            mkdir -p "$HOME/bin"
+            printf '#!/bin/sh\nexec shasum -a 256 "$@"\n' > "$HOME/bin/sha256sum"
+            chmod +x "$HOME/bin/sha256sum"
+            echo "$HOME/bin" >> "$GITHUB_PATH"
+          fi
+
+      # خطوط «ثمانية» المرخّصة من مستودع خاص. بلا المفتاح يُبنى التطبيق بالخط الاحتياطي.
+      - name: الخطوط
+        env:
+          MANAR_FONTS_DEPLOY_KEY: ${{ secrets.MANAR_FONTS_DEPLOY_KEY }}
+          MANAR_REQUIRE_FONTS: "false"
+        run: bash scripts/fetch-thmanyah-fonts.sh
+
+      - name: تثبيت الحزم
+        run: npm ci --no-audit --no-fund
+
+      - name: بناء الواجهة ومزامنة iOS
+        run: npm run build:ios
+
+      - name: XcodeGen
+        run: |
+          brew install xcodegen
+          npm run ios:project
+
+      - name: أصوات الإشعارات صالحة (CAF ≤ ٣٠ ثانية)
+        run: |
+          n=0
+          for f in ios/App/App/ManarSounds/*.caf; do
+            d=$(afinfo "$f" | awk '/estimated duration/ {print $3}')
+            awk -v d="$d" -v f="$f" 'BEGIN { if (d == "" || d + 0 > 30) { print "::error::" f " مدته " d; exit 1 } }'
+            n=$((n + 1))
+          done
+          echo "$n مقطعاً سليماً"
+
+      - name: اختبار التشغيل على محاكي iPhone
+        run: bash scripts/ios/smoke-test.sh
+
+      - name: رفع صور المحاكي والسجل
+        if: always()
+        continue-on-error: true
+        uses: actions/upload-artifact@v7
+        with:
+          name: ios-smoke
+          path: build/smoke
+          retention-days: 14
+          if-no-files-found: ignore
+
+      - name: بناء IPA للجهاز
+        run: bash scripts/ios/build-ipa.sh
+
+      - name: توقيع Ad Hoc (اختياري — حساب Apple Developer)
+        if: env.HAS_IOS_SIGNING == 'true'
+        env:
+          IOS_CERT_P12_BASE64: ${{ secrets.IOS_CERT_P12_BASE64 }}
+          IOS_CERT_PASSWORD: ${{ secrets.IOS_CERT_PASSWORD }}
+          IOS_PROFILE_APP_BASE64: ${{ secrets.IOS_PROFILE_APP_BASE64 }}
+          IOS_PROFILE_WIDGET_BASE64: ${{ secrets.IOS_PROFILE_WIDGET_BASE64 }}
+        run: bash scripts/ios/sign-ipa.sh
+
+      - name: رفع IPA
+        uses: actions/upload-artifact@v7
+        with:
+          name: Manar-iPhone-ipa
+          path: build/*.ipa
+          retention-days: 30
+
+      - name: سجلات Xcode عند الفشل
+        if: failure()
+        continue-on-error: true
+        uses: actions/upload-artifact@v7
+        with:
+          name: xcode-logs
+          path: build/*.log
+          retention-days: 7
+          if-no-files-found: ignore
+
+  release:
+    name: إصدار GitHub
+    needs: ios
+    if: startsWith(github.ref, 'refs/tags/v')
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@v8
+        with:
+          name: Manar-iPhone-ipa
+          path: dist-ipa
+      - name: نشر الإصدار
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ github.ref_name }}
+        run: |
+          gh release create "$TAG" dist-ipa/*.ipa -R "$GITHUB_REPOSITORY" \
+            --title "منار ايفون $TAG" \
+            --notes "ملف IPA للتثبيت على iPhone (iOS 15 فأحدث) عبر AltStore أو SideStore أو Sideloadly. طريقة التثبيت في README." \
+            || gh release upload "$TAG" dist-ipa/*.ipa -R "$GITHUB_REPOSITORY" --clobber

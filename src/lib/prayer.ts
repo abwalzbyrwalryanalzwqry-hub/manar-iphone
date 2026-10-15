@@ -1,3 +1,4 @@
+import { geolocationAvailable, getCurrentPositionCompat } from "@/lib/geo";
 import { useEffect, useMemo, useState, useLayoutEffect } from "react";
 import {
   CalculationMethod,
@@ -381,14 +382,14 @@ export function useLocation() {
   };
 
   const requestGps = () => {
-    if (typeof navigator === "undefined" || !navigator.geolocation) {
+    if (!geolocationAvailable()) {
       setStatus("unsupported");
       setError("المتصفح لا يدعم تحديد الموقع");
       return;
     }
     setStatus("requesting");
     setError(null);
-    navigator.geolocation.getCurrentPosition(
+    getCurrentPositionCompat(
       async (pos) => {
         /* أولاً بلا إنترنت: نسمّي الموقع من القاعدة المضمَّنة (٣٤٣ محافظة
          * و٢٤٢٨ مدينة عربية)، فيعمل التحديد التلقائي كاملاً في وضع الطيران

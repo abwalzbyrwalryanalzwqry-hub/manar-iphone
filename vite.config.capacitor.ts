@@ -21,7 +21,8 @@ export default defineConfig({
        *
        * chrome69 يغطّي أندرويد ٩ فما فوق ومعظم أجهزة ٧ و٨ المحدَّثة،
        * بزيادةٍ طفيفة في الحجم. التغطية هنا أهمّ من البايتات. */
-      target: ["chrome69"],
+      // WKWebView في iOS 15 (أقدم إصدار يدعمه منار ايفون) — لا ميزة لغة أحدث منه.
+      target: ["safari15", "ios15"],
     },
   },
   tanstackStart: {

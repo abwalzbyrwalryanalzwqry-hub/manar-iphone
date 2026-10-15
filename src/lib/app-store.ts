@@ -1,7 +1,7 @@
-/* منار — تقييم التطبيق ومشاركته.
+/* منار ايفون — مشاركة التطبيق.
  *
- * منار يُنشر على Google Play فقط. على أندرويد يُفتح المتجر بنيّة النظام
- * (`market://` ثم رابط الويب بديلاً)، وعلى الويب يُفتح رابط Play نفسه.
+ * نسخة iPhone لا تُنشر في App Store: تُوزَّع بين الأصدقاء والعائلة من صفحة
+ * الإصدارات في GitHub. فـ«قيّم التطبيق» مخفيّ، ورابط المشاركة صفحة التنزيل.
  */
 
 import { Capacitor } from "@capacitor/core";
@@ -18,7 +18,11 @@ export const APP_ID = "app.manar.islamic";
 export const PLAY_URL = `https://play.google.com/store/apps/details?id=${APP_ID}`;
 export const PLAY_MARKET_URL = `market://details?id=${APP_ID}`;
 
-export const SHARE_TEXT = `منار — مواقيت الصلاة والقرآن الكريم والأذكار والقبلة، بلا إعلانات وبلا حساب.\n${PLAY_URL}`;
+/** صفحة تنزيل نسخة iPhone (ملف IPA وطريقة التثبيت). */
+export const IPHONE_DOWNLOAD_URL =
+  "https://github.com/abwalzbyrwalryanalzwqry-hub/manar-iphone/releases/latest";
+
+export const SHARE_TEXT = `منار — مواقيت الصلاة والقرآن الكريم والأذكار والقبلة، بلا إعلانات وبلا حساب.\nنسخة iPhone: ${IPHONE_DOWNLOAD_URL}`;
 
 /** يفتح صفحة منار في Google Play. يعيد `false` إن لم يُفتح شيء. */
 export async function rateApp(): Promise<boolean> {

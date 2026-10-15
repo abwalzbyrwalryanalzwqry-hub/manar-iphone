@@ -19,7 +19,6 @@ import { staleIds } from "@/lib/schedule-diff";
 
 const root = resolve(__dirname, "../..");
 const read = (p: string) => readFileSync(resolve(root, p), "utf8");
-const java = (n: string) => read(`android/app/src/main/java/app/manar/islamic/${n}.java`);
 
 const perms = (o: Partial<AlertPermissions> = {}): AlertPermissions => ({
   notifications: "granted",
@@ -158,27 +157,6 @@ describe("ح٢ — جدول الأذان لا يتوقف على إذن الإش�
 });
 
 describe("ح١ — تعذّر الصوت يُقال ولا يُكتم", () => {
-  it("المستقبِل يسجّل السبب وينشر إشعار «إصلاح»", () => {
-    const src = java("AdhanAlarmReceiver");
-    expect(src).toContain("AdhanScheduler.recordPlaybackFailure(");
-    expect(src).toContain("ManarNotices.postPlaybackBlocked(");
-    expect(src).toContain("ManarPermissions.canStartPlaybackFromAlarm(");
-  });
-
-  it("إشعار التعذّر بزرّ يفتح شاشة المنبّهات الدقيقة", () => {
-    const src = java("ManarNotices");
-    expect(src).toContain('"إصلاح"');
-    expect(src).toContain("ManarPermissions.exactAlarmSettingsIntent(");
-    expect(java("ManarPermissions")).toContain("ACTION_REQUEST_SCHEDULE_EXACT_ALARM");
-  });
-
-  it("الحالة تُرجع آخر تعذّر، والبطاقة تعرضه", () => {
-    expect(java("ManarAdhanPlugin")).toContain('"playbackFailedAt"');
-    const card = read("src/components/manar/alert-system-status.tsx");
-    expect(card).toContain("playbackFailedAt");
-    expect(card).toContain("لن يُسمع الأذان والتطبيق مغلق");
-  });
-
   it("شريحة التعريف داخل أندرويد تشرح الأذونات", () => {
     const src = read("src/routes/onboarding.tsx");
     expect(src).toContain("PERMISSIONS_SLIDE");

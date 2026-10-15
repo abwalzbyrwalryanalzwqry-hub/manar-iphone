@@ -1,18 +1,12 @@
 /// <reference types="node" />
 /**
- * Manar — Capacitor (Android) configuration.
+ * منار ايفون — إعداد Capacitor (iOS).
  *
- * This is the single, canonical native wrapper for Manar. Do not add a
- * second Android architecture (Cordova, Bubblewrap/TWA, WebView shell).
+ * الواجهة نفسها تماماً كما في منار؛ والخدمات الأصلية (جدولة الأذان، الصوت في
+ * الخلفية، أزرار الإشعار، الويدجت) في إضافة Swift ‏`ManarAdhan` تحت
+ * ios/App/App/Manar. مشروع Xcode يُولَّد بـ XcodeGen من ios/App/project.yml.
  *
- * The web UI stays exactly as it is; native services (scheduled Adhan
- * notifications, background audio, media session, reboot rescheduling,
- * notification actions, audio focus) are provided by the Capacitor
- * plugins listed in docs/android/README.md.
- *
- * `webDir` expects a static client build produced by `vite build`
- * (see docs/android/README.md for the exact command and the remaining
- * signing step — no APK is produced inside Lovable).
+ * `webDir` ناتج `npm run build:ios` (بناء ثابت بلا خادم — يعمل بلا إنترنت).
  */
 import type { CapacitorConfig } from "@capacitor/cli";
 
@@ -21,16 +15,15 @@ const config: CapacitorConfig = {
   appName: "منار",
   webDir: "dist/client",
   bundledWebRuntime: false,
-  android: {
-    allowMixedContent: false,
-    captureInput: true,
-    // منذ أندرويد ١٦ (الاستهداف ٣٦) لا يمكن إلغاء وضع الحواف الكاملة
-    // (edge-to-edge)، وقيمة Capacitor الافتراضية "disable" تجعل الويب فيو يرسم
-    // تحت شريط الحالة وشريط التنقل، فيختفي أعلى الواجهة خلف الساعة.
-    // "auto" يطبّق هوامش أشرطة النطاق تلقائياً على أندرويد ١٥+.
-    adjustMarginsForEdgeToEdge: "auto",
-    // Offline-first: everything the core experience needs is bundled.
+  ios: {
+    // وحدة التحكم الجذرية تضع الويب فيو داخل المنطقة الآمنة (تحت الساعة وفوق
+    // شريط الرجوع للرئيسية) وتلوّن ما حولها بلون الواجهة؛ فلا هوامش إضافية هنا.
+    contentInset: "never",
+    backgroundColor: "#0B1F1A",
+    // بلا إنترنت أولاً: كل ما تحتاجه التجربة الأساسية مضمَّن في التطبيق.
     webContentsDebuggingEnabled: false,
+    limitsNavigationsToAppBoundDomains: false,
+    scrollEnabled: true,
   },
   plugins: {
     SplashScreen: {
@@ -40,13 +33,12 @@ const config: CapacitorConfig = {
       launchShowDuration: 3000,
       launchFadeOutDuration: 250,
       backgroundColor: "#0B1F1A",
-      androidScaleType: "CENTER_CROP",
       showSpinner: false,
+      iosSpinnerStyle: "small",
     },
     LocalNotifications: {
-      smallIcon: "ic_stat_manar",
-      iconColor: "#C9A227",
-      sound: "adhan",
+      // يظهر الإشعار وصوته حتى والتطبيق مفتوح (الأذان الكامل يتولّاه ManarAdhan).
+      presentationOptions: ["banner", "list", "sound"],
     },
   },
 };

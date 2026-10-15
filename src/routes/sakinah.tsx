@@ -7,6 +7,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { toast } from "@/lib/toast";
+import { isIOSApp } from "@/lib/ios";
 
 import { Icon, icons, Screen, ScreenHeader, SectionLabel } from "@/components/manar/shell";
 import { ampmAr, formatCountdown, formatHHMM, toArabicDigits } from "@/lib/format";
@@ -142,6 +143,12 @@ function Sakinah() {
     if (!next || !isNativeShell()) return;
     const s = await readSakinahStatus();
     setStatus(s);
+    if (isIOSApp()) {
+      toast("على iPhone تُذكّرك سكينة بتفعيل «التركيز» عند كل صلاة، وتكتم أصوات منار حتى تنتهي", {
+        duration: 6000,
+      });
+      return;
+    }
     if (s && !s.dndAccess) {
       toast("لتُسكت سكينة الهاتف أثناء الصلاة تحتاج إذن «عدم الإزعاج»", {
         duration: 6000,
@@ -221,8 +228,31 @@ function Sakinah() {
         </button>
       </div>
 
+      {/* iPhone: لا يسمح iOS لأي تطبيق بتشغيل «عدم الإزعاج» — نشرح ما تفعله سكينة فعلاً */}
+      {isIOSApp() && settings.enabled && (
+        <div className="mt-3 px-5">
+          <div className="flex items-start gap-3 rounded-2xl border border-border bg-card p-4 shadow-soft">
+            <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-secondary text-primary">
+              <Icon d={icons.moon} size={16} />
+            </span>
+            <div className="flex-1">
+              <div className="text-sm font-medium">سكينة على iPhone</div>
+              <p className="mt-1 text-[11px] leading-relaxed text-muted-foreground">
+                لا يسمح iOS لأي تطبيق بتشغيل «عدم الإزعاج» أو «التركيز» بنفسه. لذلك يصلك عند بدء كل
+                فترة إشعار هادئ بلا صوت يذكّرك بتفعيله من مركز التحكم، وتُكتم أصوات منار وتذكيراتها
+                حتى تنتهي الفترة.
+              </p>
+              <p className="mt-2 text-[11px] leading-relaxed text-muted-foreground">
+                نصيحة: أنشئ «تركيزاً» باسم «الصلاة» من الإعدادات ← التركيز، واسمح فيه لتطبيق منار
+                وحده، ثم شغّله من مركز التحكم بلمسة عند كل صلاة.
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* إذن «عدم الإزعاج» — بيد المستخدم */}
-      {isNativeShell() && settings.enabled && status && (
+      {isNativeShell() && !isIOSApp() && settings.enabled && status && (
         <div className="mt-3 px-5">
           <div
             className={`flex items-start gap-3 rounded-2xl border p-4 shadow-soft ${
@@ -265,7 +295,9 @@ function Sakinah() {
         >
           {!settings.enabled ? (
             <p className="text-[11px] leading-relaxed text-muted-foreground">
-              فعّل سكينة ليصمت هاتفك وحده مع كل صلاة، ثم يعود كما كان بعدها.
+              {isIOSApp()
+                ? "فعّل سكينة لتُذكّرك بالهدوء مع كل صلاة وتكتم أصوات منار حتى تنتهي."
+                : "فعّل سكينة ليصمت هاتفك وحده مع كل صلاة، ثم يعود كما كان بعدها."}
             </p>
           ) : active ? (
             <>
@@ -543,39 +575,51 @@ function Sakinah() {
           {/* إعدادات الصوت */}
           <SectionLabel hint="ما يُسمح له بالمرور أثناء الهدوء">إعدادات الصوت</SectionLabel>
           <div className="space-y-2 px-5">
-            <div className="rounded-2xl border border-border bg-card p-4 shadow-soft">
-              <Label>المكالمات والإشعارات</Label>
-              <div className="mt-2 space-y-1.5">
-                <Radio
-                  label="أصوات منار فقط (موصى به)"
-                  hint="يمرّ أذان منار وإقامتها وتنبيهاتها وحدها، وتُكتم المكالمات والرسائل وإشعارات التطبيقات الأخرى والوسائط"
-                  active={filter === "manar"}
-                  onClick={() => update(filterPatch("manar"))}
-                />
-                <Radio
-                  label="السماح بالمكالمات المهمة والمنبّهات"
-                  hint="نمط «الأولوية» في النظام حسب استثناءاتك فيه، مع أصوات منار"
-                  active={filter === "priority"}
-                  onClick={() => update(filterPatch("priority"))}
-                />
-                <Radio
-                  label="المنبّهات فقط"
-                  hint="يصمت كل شيء إلا المنبّهات، ومنها أذان منار وإقامتها"
-                  active={filter === "alarms"}
-                  onClick={() => update(filterPatch("alarms"))}
-                />
-                <Radio
-                  label="صمت كامل"
-                  hint="لا شيء يصدر صوتًا، ولا أذان منار نفسه"
-                  active={filter === "none"}
-                  onClick={() => update(filterPatch("none"))}
-                />
+            {isIOSApp() ? (
+              <div className="rounded-2xl border border-border bg-card p-4 shadow-soft">
+                <Label>المكالمات والإشعارات</Label>
+                <p className="mt-2 text-[11px] leading-relaxed text-muted-foreground">
+                  على iPhone يحدّد «التركيز» ما يمرّ من المكالمات وإشعارات التطبيقات الأخرى
+                  (الإعدادات ← التركيز ← اختر التركيز ← الأشخاص والتطبيقات). منار نفسه يكتم تذكيراته
+                  طوال الفترة، والأذان حسب اختيارك أدناه.
+                </p>
               </div>
-              <p className="mt-3 text-[10px] leading-relaxed text-muted-foreground">
-                منار يستخدم وضع «عدم الإزعاج» الرسمي في الهاتف ولا يعبث بمستوى صوت جهازك، ويُعيد
-                الهاتف كما كان عند انتهاء الفترة. يحتاج «أصوات منار فقط» إذن التحكم في عدم الإزعاج.
-              </p>
-            </div>
+            ) : (
+              <div className="rounded-2xl border border-border bg-card p-4 shadow-soft">
+                <Label>المكالمات والإشعارات</Label>
+                <div className="mt-2 space-y-1.5">
+                  <Radio
+                    label="أصوات منار فقط (موصى به)"
+                    hint="يمرّ أذان منار وإقامتها وتنبيهاتها وحدها، وتُكتم المكالمات والرسائل وإشعارات التطبيقات الأخرى والوسائط"
+                    active={filter === "manar"}
+                    onClick={() => update(filterPatch("manar"))}
+                  />
+                  <Radio
+                    label="السماح بالمكالمات المهمة والمنبّهات"
+                    hint="نمط «الأولوية» في النظام حسب استثناءاتك فيه، مع أصوات منار"
+                    active={filter === "priority"}
+                    onClick={() => update(filterPatch("priority"))}
+                  />
+                  <Radio
+                    label="المنبّهات فقط"
+                    hint="يصمت كل شيء إلا المنبّهات، ومنها أذان منار وإقامتها"
+                    active={filter === "alarms"}
+                    onClick={() => update(filterPatch("alarms"))}
+                  />
+                  <Radio
+                    label="صمت كامل"
+                    hint="لا شيء يصدر صوتًا، ولا أذان منار نفسه"
+                    active={filter === "none"}
+                    onClick={() => update(filterPatch("none"))}
+                  />
+                </div>
+                <p className="mt-3 text-[10px] leading-relaxed text-muted-foreground">
+                  منار يستخدم وضع «عدم الإزعاج» الرسمي في الهاتف ولا يعبث بمستوى صوت جهازك، ويُعيد
+                  الهاتف كما كان عند انتهاء الفترة. يحتاج «أصوات منار فقط» إذن التحكم في عدم
+                  الإزعاج.
+                </p>
+              </div>
+            )}
 
             <div className="rounded-2xl border border-border bg-card p-4 shadow-soft">
               <Label>أثناء سكينة — الأذان</Label>

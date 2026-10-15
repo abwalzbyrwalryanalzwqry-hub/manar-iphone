@@ -9,6 +9,7 @@
 // streaming instead.
 // ============================================================
 
+import { isIOSApp } from "@/lib/ios";
 import { useCallback, useEffect, useState, useSyncExternalStore } from "react";
 import { Capacitor } from "@capacitor/core";
 import { ayahAudioUrl, ayahFileName, needsBasmalaIntro, type Reciter } from "./recitations";
@@ -16,6 +17,17 @@ import { ayahAudioUrl, ayahFileName, needsBasmalaIntro, type Reciter } from "./r
 const KEY = "manar.quran.recitation.downloads.v1";
 const EVENT = "manar:recitation-downloads";
 const ROOT = "manar-recitations";
+
+/**
+ * مجلد التلاوات المنزّلة. على iPhone: ‎Library/NoCloud‏ — يبقى بعد إغلاق
+ * التطبيق ولا يُرفع إلى نسخة iCloud الاحتياطية (مئات الميغابايتات من صوتٍ
+ * يُعاد تنزيله)، ولا يحذفه النظام عند امتلاء التخزين كما يحذف Caches.
+ */
+function recitationDirectory<D extends { Data: unknown; LibraryNoCloud: unknown }>(
+  Directory: D,
+): D["Data"] {
+  return (isIOSApp() ? Directory.LibraryNoCloud : Directory.Data) as D["Data"];
+}
 /** عدد الملفات التي تُحمَّل في الوقت نفسه. */
 export const DOWNLOAD_CONCURRENCY = 4;
 /** نسخة البسملة المحفوظة داخل مجلد كل سورة. */
@@ -136,16 +148,18 @@ export function downloadSurah(
   void (async () => {
     try {
       if (!offlineSupported()) {
-        throw new Error("التحميل للاستماع بدون إنترنت متاح في تطبيق الأندرويد فقط");
+        throw new Error("التحميل للاستماع بدون إنترنت متاح في تطبيق منار للآيفون فقط");
       }
       const { Filesystem, Directory } = await import("@capacitor/filesystem");
       const dir = `${ROOT}/${reciter.folder}/${String(surah).padStart(3, "0")}`;
 
-      await Filesystem.mkdir({ path: dir, directory: Directory.Data, recursive: true }).catch(
-        () => {
-          /* already exists */
-        },
-      );
+      await Filesystem.mkdir({
+        path: dir,
+        directory: recitationDirectory(Directory),
+        recursive: true,
+      }).catch(() => {
+        /* already exists */
+      });
 
       // الملفات: آيات السورة، ومعها البسملة (001001) لسور تبدأ بها،
       // لتعمل البسملة التمهيدية بدون إنترنت أيضاً.
@@ -169,9 +183,10 @@ export function downloadSurah(
         while (!cancelled && !failure && next < files.length) {
           const file = files[next++];
           const path = `${dir}/${file.name}`;
-          const existing = await Filesystem.stat({ path, directory: Directory.Data }).catch(
-            () => null,
-          );
+          const existing = await Filesystem.stat({
+            path,
+            directory: recitationDirectory(Directory),
+          }).catch(() => null);
           if (existing && existing.size > 1024) {
             bytes += existing.size;
           } else {
@@ -182,7 +197,12 @@ export function downloadSurah(
             }
             const blob = await res.blob();
             const data = await blobToBase64(blob);
-            await Filesystem.writeFile({ path, directory: Directory.Data, data, recursive: true });
+            await Filesystem.writeFile({
+              path,
+              directory: recitationDirectory(Directory),
+              data,
+              recursive: true,
+            });
             bytes += blob.size;
           }
           done += 1;
@@ -206,7 +226,10 @@ export function downloadSurah(
       if (failure) throw failure;
 
       if (cancelled) return;
-      const { uri } = await Filesystem.getUri({ path: dir, directory: Directory.Data });
+      const { uri } = await Filesystem.getUri({
+        path: dir,
+        directory: recitationDirectory(Directory),
+      });
       const entry: DownloadedSurah = {
         folder: reciter.folder,
         surah,
@@ -348,7 +371,7 @@ export async function deleteDownload(folder: string, surah: number): Promise<voi
       const { Filesystem, Directory } = await import("@capacitor/filesystem");
       await Filesystem.rmdir({
         path: `${ROOT}/${folder}/${String(surah).padStart(3, "0")}`,
-        directory: Directory.Data,
+        directory: recitationDirectory(Directory),
         recursive: true,
       });
     } catch {

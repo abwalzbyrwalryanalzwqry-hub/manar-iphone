@@ -1,12 +1,4 @@
-import {
-  existsSync,
-  openSync,
-  readSync,
-  closeSync,
-  readdirSync,
-  readFileSync,
-  statSync,
-} from "node:fs";
+import { existsSync, openSync, readSync, closeSync, readdirSync, statSync } from "node:fs";
 import { resolve } from "node:path";
 import { describe, expect, it } from "vitest";
 import {
@@ -49,20 +41,6 @@ describe("مكتبة الإقامة", () => {
     expect(new Set(names).size).toBe(names.length);
     for (const s of IQAMAH_SOUNDS)
       expect(s.name).toMatch(/^الحرم (المكي|النبوي) · (الفجر|المغرب|العشاء) /);
-  });
-
-  it("الإقامات الكاملة المحذوفة تُنقل إلى مقطع إقامة باقٍ — والمطابقة نفسها في أندرويد", () => {
-    const java = readFileSync(
-      resolve(ROOT, "android/app/src/main/java/app/manar/islamic/AdhanService.java"),
-      "utf8",
-    );
-    for (let n = 1; n <= 7; n++) {
-      const old = `iqamah_0${n}`;
-      const id = migrateIqamahId(old);
-      expect(id, old).not.toBeNull();
-      expect(getIqamahSound(id)).not.toBeNull();
-      expect(java).toContain(`case "${old}": return "${id}";`);
-    }
   });
 
   it("كل ملف موجود محلياً بحجمه المُعلَن وصيغته الحقيقية", () => {

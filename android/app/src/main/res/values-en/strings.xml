@@ -1,8 +1,0 @@
-<?xml version='1.0' encoding='utf-8'?>
-<resources>
-    <string name="app_name">Manar</string>
-    <string name="title_activity_main">Manar</string>
-    <string name="widget_description">Next prayer with a live countdown, Hijri date and verse of the day</string>
-    <string name="widget_remaining">Remaining</string>
-    <string name="widget_open_app">Open Manar to refresh prayer times</string>
-</resources>

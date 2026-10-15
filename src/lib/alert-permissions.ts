@@ -15,6 +15,8 @@
  * الدوالّ هنا نقيّة (تُختبر بلا جهاز)، والقراءة الفعلية في `readAlertPermissions`.
  */
 
+import { isIOSApp } from "@/lib/ios";
+
 export type NotificationPermissionState = "granted" | "denied" | "prompt" | "unsupported";
 
 export type AlertPermissions = {
@@ -62,6 +64,10 @@ export function verdictMessage(p: AlertPermissions): string | null {
   if (v === "late")
     return "إذن «المنبّهات والتذكيرات» غير ممنوح — قد يتأخّر الأذان والإقامة دقائق.";
   if (p.notifications !== "granted") {
+    /* iOS: الأذان نفسه إشعار — بلا إذن الإشعارات لا يصل شيء إطلاقاً. */
+    if (isIOSApp()) {
+      return "الإشعارات معطّلة لمنار — على iPhone لن يصل الأذان ولا أي تنبيه. فعّلها من الإعدادات ← منار ← الإشعارات.";
+    }
     return "الإشعارات معطّلة لمنار — يُسمع الأذان، لكن لا يظهر أي تنبيه مكتوب ولا زرّ لإيقافه.";
   }
   return null;

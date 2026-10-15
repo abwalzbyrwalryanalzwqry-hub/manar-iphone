@@ -31,6 +31,7 @@
 import { applyPrayed } from "@/lib/prayed-queue";
 import type { AlertLogEvent, ChannelInfo } from "@/lib/alert-center";
 import { Capacitor, registerPlugin } from "@capacitor/core";
+import { foldLocalNotification, iosNotificationSound, isIOSApp } from "@/lib/ios";
 import { LocalNotifications } from "@capacitor/local-notifications";
 import { computePrayerTimes, type LocationState, type Settings } from "@/lib/prayer";
 import {
@@ -89,6 +90,18 @@ import {
 } from "@/lib/alert-permissions";
 import { staleIds } from "@/lib/schedule-diff";
 import { minutesAr } from "@/lib/notification-text";
+
+export type IOSNativeInfo = {
+  platform: "ios";
+  system?: string;
+  model?: string;
+  authorization?: number;
+  sounds?: boolean;
+  lockScreen?: boolean;
+  timeSensitive?: boolean;
+  backgroundRefresh?: boolean;
+  appGroup?: boolean;
+};
 
 type LocalNotificationsPlugin = {
   requestPermissions: () => Promise<{ display: string }>;
@@ -255,6 +268,12 @@ type ManarAdhanPlugin = {
   sakinahClearSkips: () => Promise<void>;
   sakinahRequestPolicyAccess: () => Promise<{ granted: boolean; opened?: boolean }>;
   sakinahOpenPolicyAccessSettings: () => Promise<{ granted: boolean; opened: boolean }>;
+  /** iOS: لون ما خارج المنطقة الآمنة (خلف شريط الحالة ومؤشّر الرئيسية). */
+  setSystemBars?: (o: { color: string }) => Promise<void>;
+  /** iOS: يعيد دمج فئات أزرار منار بعد أن تستبدلها LocalNotifications. */
+  iosEnsureCategories?: () => Promise<void>;
+  /** iOS: حالة النظام لمنار (للتشخيص والإرشاد). */
+  iosInfo?: () => Promise<IOSNativeInfo>;
   addListener: (
     event: string,
     cb: (e: unknown) => void,
@@ -285,7 +304,53 @@ function isNative(): boolean {
 
 function plugin(): LocalNotificationsPlugin | null {
   if (!isNative()) return null;
-  return LocalNotifications as unknown as LocalNotificationsPlugin;
+  const ln = LocalNotifications as unknown as LocalNotificationsPlugin;
+  return isIOSApp() ? iosLocalNotifications(ln) : ln;
+}
+
+/**
+ * iOS: لا قنوات، والصوت اسم ملف CAF في الإشعار نفسه. ونعيد دمج فئات أزرار
+ * منار بعد `registerActionTypes` (الإضافة تستبدل الفئات كلها في iOS).
+ */
+let iosLnWrapper: LocalNotificationsPlugin | null = null;
+function iosLocalNotifications(ln: LocalNotificationsPlugin): LocalNotificationsPlugin {
+  if (iosLnWrapper) return iosLnWrapper;
+  /* كائن صريح لا `Object.create`: الإضافة وكيل Proxy من Capacitor. */
+  const wrapped: LocalNotificationsPlugin = {
+    requestPermissions: () => ln.requestPermissions(),
+    checkPermissions: () => ln.checkPermissions(),
+    registerActionTypes: (o) => ln.registerActionTypes(o),
+    getPending: () => ln.getPending(),
+    cancel: (o) => ln.cancel(o),
+    schedule: (o) => ln.schedule(o),
+    createChannel: async () => {},
+    deleteChannel: async () => {},
+    listChannels: async () => ({ channels: [] }),
+    addListener: (event, cb) => ln.addListener(event, cb),
+  };
+  wrapped.schedule = (o: { notifications: unknown[] }) =>
+    ln.schedule({
+      notifications: o.notifications.map((n) => {
+        const item = { ...(n as Record<string, unknown>) };
+        item.sound = iosNotificationSound(
+          typeof item.channelId === "string" ? item.channelId : undefined,
+          typeof item.sound === "string" ? item.sound : undefined,
+        );
+        delete item.channelId;
+        delete item.smallIcon;
+        return item;
+      }),
+    });
+  wrapped.registerActionTypes = async (types: unknown) => {
+    await ln.registerActionTypes(types);
+    try {
+      await ManarAdhan.iosEnsureCategories?.();
+    } catch {
+      /* نسخة أصلية أقدم */
+    }
+  };
+  iosLnWrapper = wrapped;
+  return wrapped;
 }
 
 function adhanPlugin(): ManarAdhanPlugin | null {
@@ -666,6 +731,9 @@ export function defaultReminderChannelFor(level: NotificationLevel = 100): strin
 let soundChannelsLevel: string | null = null;
 
 async function ensureSoundChannels(p: LocalNotificationsPlugin, level: NotificationLevel) {
+  /* iOS بلا قنوات: الصوت يُشتقّ من معرّف القناة نفسه في الطبقة الأصلية، فتبقى
+   * المعرّفات «المقصودة» (failedChannels فارغة) ولا يُستدعى ما لا يُنفَّذ. */
+  if (isIOSApp()) return;
   setChannelVibration(getAdhanSettings().vibrationEnabled);
   const cacheKey = `${level}${nv()}`;
   if (soundChannelsLevel === cacheKey) return;
@@ -1004,6 +1072,18 @@ async function syncNativePrayerScheduleNow(
     console.error("[manar] تعذّر حساب تنبيهات الجمعة", e);
   }
 
+  /* iOS: حدّ النظام ٦٤ إشعاراً معلّقاً للتطبيق كله. تمرّ المواسم والجمعة عبر
+   * الجدول الأصلي نفسه فيقتسم الجميع الميزانية بالأقرب أولاً، ولا يُسقط iOS
+   * أذاناً بصمت لأن تذكير موسمٍ بعيد سبقه إلى المكان. */
+  const iosFolded: ManarAdhanEvent[] = [];
+  if (isIOSApp()) {
+    for (const r of reminders) {
+      const e = foldLocalNotification(r);
+      if (e) iosFolded.push({ ...e, prayer: "dhuhr" } as unknown as ManarAdhanEvent);
+    }
+    reminders.length = 0;
+  }
+
   /* حدّ أعلى لـLocalNotifications: كل إشعارٍ منبّهٌ في النظام، وحدّ أندرويد
    * ٥٠٠ للتطبيق كله (مع نافذة الأذان وسكينة). الأقرب أولاً. */
   if (reminders.length > LN_CAP) {
@@ -1019,6 +1099,7 @@ async function syncNativePrayerScheduleNow(
   const adhanEvents: ManarAdhanEvent[] = [
     ...buildAdhan(renewPlan({ lnItems: reminders.length, sakinah: readSakinah().enabled })),
     ...dailyEvents,
+    ...iosFolded,
   ].sort((a, b) => a.at - b.at || a.id - b.id);
 
   let scheduled = 0;
