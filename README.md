@@ -14,6 +14,9 @@
 [صفحة الإصدارات](https://github.com/abwalzbyrwalryanalzwqry-hub/manar-iphone/releases/latest)
 (وكل بناء في تبويب Actions ضمن المخرَجات). اختر طريقة:
 
+> **للأهل والأصدقاء:** دليل خطوة بخطوة بلا مصطلحات تقنية، مع حلّ المشكلات الشائعة:
+> [docs/INSTALL.ar.md](docs/INSTALL.ar.md).
+
 ### ١) مجاناً بحساب Apple عادي — AltStore أو SideStore أو Sideloadly
 
 1. ثبّت [AltStore](https://altstore.io) (أو SideStore / Sideloadly) على الكمبيوتر وiPhone.

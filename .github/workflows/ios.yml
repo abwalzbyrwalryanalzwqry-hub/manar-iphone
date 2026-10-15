@@ -46,11 +46,14 @@ jobs:
             echo "$HOME/bin" >> "$GITHUB_PATH"
           fi
 
-      # خطوط «ثمانية» المرخّصة من مستودع خاص. بلا المفتاح يُبنى التطبيق بالخط الاحتياطي.
+      # خطوط «ثمانية» المرخّصة من مستودع خاص (مفتاح نشر للقراءة فقط في السرّ
+      # MANAR_FONTS_DEPLOY_KEY). بناء main والإصدارات يفشل إن غاب الخط، حتى لا يُنشر
+      # IPA بالخط البديل خطأً؛ وطلبات الدمج (PR) تُبنى بالخط البديل إن لم يتوفّر السرّ.
       - name: الخطوط
+        id: fonts
         env:
           MANAR_FONTS_DEPLOY_KEY: ${{ secrets.MANAR_FONTS_DEPLOY_KEY }}
-          MANAR_REQUIRE_FONTS: "false"
+          MANAR_REQUIRE_FONTS: ${{ github.event_name != 'pull_request' }}
         run: bash scripts/fetch-thmanyah-fonts.sh
 
       - name: تثبيت الحزم
@@ -135,5 +138,5 @@ jobs:
         run: |
           gh release create "$TAG" dist-ipa/*.ipa -R "$GITHUB_REPOSITORY" \
             --title "منار ايفون $TAG" \
-            --notes "ملف IPA للتثبيت على iPhone (iOS 15 فأحدث) عبر AltStore أو SideStore أو Sideloadly. طريقة التثبيت في README." \
+            --notes "ملف IPA للتثبيت على iPhone (iOS 15 فأحدث) عبر AltStore أو SideStore أو Sideloadly. دليل التثبيت للأهل والأصدقاء: https://github.com/${GITHUB_REPOSITORY}/blob/main/docs/INSTALL.ar.md" \
             || gh release upload "$TAG" dist-ipa/*.ipa -R "$GITHUB_REPOSITORY" --clobber
