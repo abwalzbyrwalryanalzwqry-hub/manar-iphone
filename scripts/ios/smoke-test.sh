@@ -48,63 +48,77 @@ xcrun simctl status_bar "$UDID" override --time 9:41 --batteryState charged --ba
 xcrun simctl privacy "$UDID" grant location "$BUNDLE" 2>/dev/null
 xcrun simctl install "$UDID" "$APP" || { echo "::error::فشل التثبيت"; exit 1; }
 
-# ١) الإقلاع الأول (شاشات الترحيب) مع سجلّ console كاملاً.
-xcrun simctl launch --console-pty --terminate-running-process "$UDID" "$BUNDLE" > "$OUT/console.log" 2>&1 &
-LAUNCHER=$!
-sleep 25
-xcrun simctl io "$UDID" screenshot "$OUT/01-launch.png" >/dev/null 2>&1
-ALIVE=0
-xcrun simctl spawn "$UDID" launchctl list 2>/dev/null | grep -q "$BUNDLE" && ALIVE=1
-kill "$LAUNCHER" 2>/dev/null
+CRASH_DIR="$HOME/Library/Logs/DiagnosticReports"
+mkdir -p "$CRASH_DIR"
+touch "$OUT/.start"
+: > "$OUT/console.log"
+
+# يشغّل التطبيق (اختيارياً إلى مسار) وينتظر حتى تُحمَّل الواجهة فعلاً — أي سطر
+# «WebView loaded» جديد في السجل — ثم يلتقط الصورة. المحاكي في CI بطيء أحياناً
+# (أول إقلاع على iOS 26 قد يتجاوز دقيقة)، فلا نعتمد على مهلة ثابتة.
+shot() { # $1 udid  $2 route|""  $3 png
+  local before n t=0
+  before=$(grep -c "WebView loaded" "$OUT/console.log")
+  if [ -n "$2" ]; then
+    xcrun simctl launch --console-pty --terminate-running-process "$1" "$BUNDLE" -ManarSmokeRoute "$2" >> "$OUT/console.log" 2>&1 &
+  else
+    xcrun simctl launch --console-pty --terminate-running-process "$1" "$BUNDLE" >> "$OUT/console.log" 2>&1 &
+  fi
+  LAUNCHER=$!
+  while [ $t -lt 240 ]; do
+    n=$(grep -c "WebView loaded" "$OUT/console.log")
+    [ "$n" -gt "$before" ] && break
+    sleep 2; t=$((t + 2))
+  done
+  [ "$n" -gt "$before" ] || echo "::warning::لم تُحمَّل الواجهة خلال ٤ دقائق (${2:-launch})"
+  sleep 6
+  xcrun simctl io "$1" screenshot "$3" >/dev/null 2>&1
+  kill "$LAUNCHER" 2>/dev/null
+  wait "$LAUNCHER" 2>/dev/null
+}
+
+# ١) الإقلاع الأول (شاشات الترحيب).
+shot "$UDID" "" "$OUT/01-launch.png"
 
 # ٢) كل شاشة رئيسية بإقلاعٍ بارد إلى مسارها — المسار نفسه الذي يسلكه نقر إشعار
 # (أو الويدجت) والتطبيق مغلق. نافذة «فتح في منار؟» لا تظهر بهذه الطريقة.
 i=2
 for route in home prayer quran azkar qibla calendar notifications adhan sakinah widget reminders tasbih more about; do
-  xcrun simctl launch --console-pty --terminate-running-process "$UDID" "$BUNDLE" -ManarSmokeRoute "/$route" \
-    >> "$OUT/console.log" 2>&1 &
-  LAUNCHER=$!
-  sleep 9
-  xcrun simctl io "$UDID" screenshot "$OUT/$(printf %02d $i)-$route.png" >/dev/null 2>&1
-  xcrun simctl spawn "$UDID" launchctl list 2>/dev/null | grep -q "$BUNDLE" || { echo "::error::انهار على /$route"; ALIVE=0; }
-  kill "$LAUNCHER" 2>/dev/null
+  shot "$UDID" "/$route" "$OUT/$(printf %02d $i)-$route.png"
   i=$((i + 1))
 done
 
 # ٣) الوضع الداكن.
 xcrun simctl ui "$UDID" appearance dark 2>/dev/null
-xcrun simctl launch --console-pty --terminate-running-process "$UDID" "$BUNDLE" -ManarSmokeRoute /prayer \
-  >> "$OUT/console.log" 2>&1 &
-LAUNCHER=$!
-sleep 9
-xcrun simctl io "$UDID" screenshot "$OUT/$(printf %02d $i)-prayer-dark.png" >/dev/null 2>&1
-kill "$LAUNCHER" 2>/dev/null
+shot "$UDID" "/prayer" "$OUT/$(printf %02d $i)-prayer-dark.png"
 xcrun simctl ui "$UDID" appearance light 2>/dev/null
 xcrun simctl terminate "$UDID" "$BUNDLE" 2>/dev/null
 
-# ٤) شاشة صغيرة بلا «نتوء» (iPhone SE): الإقلاع وثلاث شاشات.
+# ٤) شاشة صغيرة بلا «نتوء» (iPhone SE).
 if [ -n "$SE_UDID" ] && [ "$SE_UDID" != "$UDID" ]; then
   xcrun simctl shutdown "$UDID" 2>/dev/null
   xcrun simctl boot "$SE_UDID" 2>/dev/null
   xcrun simctl bootstatus "$SE_UDID" -b >/dev/null
   xcrun simctl status_bar "$SE_UDID" override --time 9:41 --batteryState charged --batteryLevel 100 2>/dev/null
   xcrun simctl install "$SE_UDID" "$APP"
-  for route in prayer quran more; do
-    xcrun simctl launch --console-pty --terminate-running-process "$SE_UDID" "$BUNDLE" -ManarSmokeRoute "/$route" \
-      >> "$OUT/console.log" 2>&1 &
-    LAUNCHER=$!
-    sleep 12
-    xcrun simctl io "$SE_UDID" screenshot "$OUT/se-$route.png" >/dev/null 2>&1
-    xcrun simctl spawn "$SE_UDID" launchctl list 2>/dev/null | grep -q "$BUNDLE" || { echo "::error::انهار على SE /$route"; ALIVE=0; }
-    kill "$LAUNCHER" 2>/dev/null
-  done
+  for route in prayer quran more; do shot "$SE_UDID" "/$route" "$OUT/se-$route.png"; done
   xcrun simctl terminate "$SE_UDID" "$BUNDLE" 2>/dev/null
 fi
 
 echo "---- console (أوّل ١٢٠ سطراً) ----"
 head -120 "$OUT/console.log"
 FAIL=0
-if [ "$ALIVE" != 1 ]; then echo "::error::انهار التطبيق أو أُغلق أثناء الاختبار"; FAIL=1; fi
+# الانهيار الحقيقي يترك تقريراً في DiagnosticReports (App-*.ips).
+CRASHES=$(find "$CRASH_DIR" -newer "$OUT/.start" \( -name "App-*.ips" -o -name "App_*.ips" -o -name "ManarWidget*.ips" \) 2>/dev/null)
+if [ -n "$CRASHES" ]; then
+  echo "::error::انهار التطبيق — تقارير الانهيار:"
+  mkdir -p "$OUT/crashes"
+  for c in $CRASHES; do cp "$c" "$OUT/crashes/"; head -c 4000 "$c"; echo; done
+  FAIL=1
+fi
+LOADS=$(grep -c "WebView loaded" "$OUT/console.log")
+echo "مرّات تحميل الواجهة: $LOADS"
+[ "$LOADS" -ge 10 ] || { echo "::error::الواجهة لم تُحمَّل في أغلب الإقلاعات"; FAIL=1; }
 if grep -E "\[error\]|Unhandled|TypeError|ReferenceError|SyntaxError" "$OUT/console.log" | grep -v "status bar\|system bars" > "$OUT/js-errors.log"; then
   echo "::error::أخطاء JavaScript:"; cat "$OUT/js-errors.log"; FAIL=1
 fi
