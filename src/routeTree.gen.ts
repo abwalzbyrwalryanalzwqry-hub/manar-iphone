@@ -9,141 +9,60 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as WirdRouteImport } from './routes/wird'
-import { Route as WidgetRouteImport } from './routes/widget'
-import { Route as TermsRouteImport } from './routes/terms'
-import { Route as TasbihRouteImport } from './routes/tasbih'
-import { Route as StatisticsRouteImport } from './routes/statistics'
-import { Route as SourcesRouteImport } from './routes/sources'
-import { Route as SettingsRouteImport } from './routes/settings'
-import { Route as SakinahRouteImport } from './routes/sakinah'
-import { Route as RemindersRouteImport } from './routes/reminders'
-import { Route as QiblaRouteImport } from './routes/qibla'
-import { Route as PrivacyRouteImport } from './routes/privacy'
-import { Route as OnboardingRouteImport } from './routes/onboarding'
-import { Route as NotificationsRouteImport } from './routes/notifications'
-import { Route as MyDataRouteImport } from './routes/my-data'
-import { Route as JumuahRouteImport } from './routes/jumuah'
-import { Route as IqamaRouteImport } from './routes/iqama'
-import { Route as CalendarRouteImport } from './routes/calendar'
-import { Route as AdhanRouteImport } from './routes/adhan'
-import { Route as AboutRouteImport } from './routes/about'
-import { Route as TabsRouteImport } from './routes/_tabs'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as WirdIndexRouteImport } from './routes/wird.index'
-import { Route as TasbihIndexRouteImport } from './routes/tasbih.index'
-import { Route as SeasonsIndexRouteImport } from './routes/seasons.index'
-import { Route as WirdSessionRouteImport } from './routes/wird.$session'
-import { Route as TasbihLibraryRouteImport } from './routes/tasbih.library'
-import { Route as SeasonsSeasonRouteImport } from './routes/seasons.$season'
-import { Route as QuranTafsirRouteImport } from './routes/quran.tafsir'
-import { Route as QuranShareRouteImport } from './routes/quran.share'
-import { Route as QuranSearchRouteImport } from './routes/quran.search'
-import { Route as QuranRecitationsRouteImport } from './routes/quran.recitations'
-import { Route as QuranReaderSettingsRouteImport } from './routes/quran.reader-settings'
-import { Route as QuranMushafRouteImport } from './routes/quran.mushaf'
-import { Route as QuranLastReadRouteImport } from './routes/quran.last-read'
-import { Route as QuranKhatmahRouteImport } from './routes/quran.khatmah'
-import { Route as QuranBookmarksRouteImport } from './routes/quran.bookmarks'
-import { Route as AzkarSearchRouteImport } from './routes/azkar.search'
-import { Route as AzkarBookmarksRouteImport } from './routes/azkar.bookmarks'
-import { Route as AzkarChapterRouteImport } from './routes/azkar.$chapter'
-import { Route as TabsQuranRouteImport } from './routes/_tabs.quran'
-import { Route as TabsPrayerRouteImport } from './routes/_tabs.prayer'
-import { Route as TabsMoreRouteImport } from './routes/_tabs.more'
-import { Route as TabsHomeRouteImport } from './routes/_tabs.home'
+import { Route as TabsRouteImport } from './routes/_tabs'
+import { Route as AboutRouteImport } from './routes/about'
+import { Route as AdhanRouteImport } from './routes/adhan'
+import { Route as CalendarRouteImport } from './routes/calendar'
+import { Route as IqamaRouteImport } from './routes/iqama'
+import { Route as JumuahRouteImport } from './routes/jumuah'
+import { Route as MyDataRouteImport } from './routes/my-data'
+import { Route as NotificationsRouteImport } from './routes/notifications'
+import { Route as OnboardingRouteImport } from './routes/onboarding'
+import { Route as PrivacyRouteImport } from './routes/privacy'
+import { Route as QiblaRouteImport } from './routes/qibla'
+import { Route as RemindersRouteImport } from './routes/reminders'
+import { Route as SakinahRouteImport } from './routes/sakinah'
+import { Route as SettingsRouteImport } from './routes/settings'
+import { Route as SourcesRouteImport } from './routes/sources'
+import { Route as StatisticsRouteImport } from './routes/statistics'
+import { Route as TasbihRouteImport } from './routes/tasbih'
+import { Route as TermsRouteImport } from './routes/terms'
+import { Route as WidgetRouteImport } from './routes/widget'
+import { Route as WirdRouteImport } from './routes/wird'
 import { Route as TabsAzkarRouteImport } from './routes/_tabs.azkar'
-import { Route as WirdListSessionRouteImport } from './routes/wird.list.$session'
+import { Route as TabsHomeRouteImport } from './routes/_tabs.home'
+import { Route as TabsMoreRouteImport } from './routes/_tabs.more'
+import { Route as TabsPrayerRouteImport } from './routes/_tabs.prayer'
+import { Route as TabsQuranRouteImport } from './routes/_tabs.quran'
+import { Route as AzkarChapterRouteImport } from './routes/azkar.$chapter'
+import { Route as AzkarBookmarksRouteImport } from './routes/azkar.bookmarks'
+import { Route as AzkarSearchRouteImport } from './routes/azkar.search'
+import { Route as QuranBookmarksRouteImport } from './routes/quran.bookmarks'
+import { Route as QuranKhatmahRouteImport } from './routes/quran.khatmah'
+import { Route as QuranLastReadRouteImport } from './routes/quran.last-read'
+import { Route as QuranMushafRouteImport } from './routes/quran.mushaf'
+import { Route as QuranReaderSettingsRouteImport } from './routes/quran.reader-settings'
+import { Route as QuranRecitationsRouteImport } from './routes/quran.recitations'
+import { Route as QuranSearchRouteImport } from './routes/quran.search'
+import { Route as QuranShareRouteImport } from './routes/quran.share'
+import { Route as QuranTafsirRouteImport } from './routes/quran.tafsir'
+import { Route as SeasonsIndexRouteImport } from './routes/seasons.index'
+import { Route as SeasonsSeasonRouteImport } from './routes/seasons.$season'
+import { Route as TasbihIndexRouteImport } from './routes/tasbih.index'
+import { Route as TasbihLibraryRouteImport } from './routes/tasbih.library'
+import { Route as WirdIndexRouteImport } from './routes/wird.index'
+import { Route as WirdSessionRouteImport } from './routes/wird.$session'
 import { Route as AzkarGroupGroupRouteImport } from './routes/azkar.group.$group'
+import { Route as WirdListSessionRouteImport } from './routes/wird.list.$session'
 
-const WirdRoute = WirdRouteImport.update({
-  id: '/wird',
-  path: '/wird',
+const IndexRoute = IndexRouteImport.update({
+  id: '/',
+  path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const WidgetRoute = WidgetRouteImport.update({
-  id: '/widget',
-  path: '/widget',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const TermsRoute = TermsRouteImport.update({
-  id: '/terms',
-  path: '/terms',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const TasbihRoute = TasbihRouteImport.update({
-  id: '/tasbih',
-  path: '/tasbih',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const StatisticsRoute = StatisticsRouteImport.update({
-  id: '/statistics',
-  path: '/statistics',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const SourcesRoute = SourcesRouteImport.update({
-  id: '/sources',
-  path: '/sources',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const SettingsRoute = SettingsRouteImport.update({
-  id: '/settings',
-  path: '/settings',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const SakinahRoute = SakinahRouteImport.update({
-  id: '/sakinah',
-  path: '/sakinah',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const RemindersRoute = RemindersRouteImport.update({
-  id: '/reminders',
-  path: '/reminders',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const QiblaRoute = QiblaRouteImport.update({
-  id: '/qibla',
-  path: '/qibla',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const PrivacyRoute = PrivacyRouteImport.update({
-  id: '/privacy',
-  path: '/privacy',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const OnboardingRoute = OnboardingRouteImport.update({
-  id: '/onboarding',
-  path: '/onboarding',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const NotificationsRoute = NotificationsRouteImport.update({
-  id: '/notifications',
-  path: '/notifications',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const MyDataRoute = MyDataRouteImport.update({
-  id: '/my-data',
-  path: '/my-data',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const JumuahRoute = JumuahRouteImport.update({
-  id: '/jumuah',
-  path: '/jumuah',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const IqamaRoute = IqamaRouteImport.update({
-  id: '/iqama',
-  path: '/iqama',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const CalendarRoute = CalendarRouteImport.update({
-  id: '/calendar',
-  path: '/calendar',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AdhanRoute = AdhanRouteImport.update({
-  id: '/adhan',
-  path: '/adhan',
+const TabsRoute = TabsRouteImport.update({
+  id: '/_tabs',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AboutRoute = AboutRouteImport.update({
@@ -151,118 +70,99 @@ const AboutRoute = AboutRouteImport.update({
   path: '/about',
   getParentRoute: () => rootRouteImport,
 } as any)
-const TabsRoute = TabsRouteImport.update({
-  id: '/_tabs',
+const AdhanRoute = AdhanRouteImport.update({
+  id: '/adhan',
+  path: '/adhan',
   getParentRoute: () => rootRouteImport,
 } as any)
-const IndexRoute = IndexRouteImport.update({
-  id: '/',
-  path: '/',
+const CalendarRoute = CalendarRouteImport.update({
+  id: '/calendar',
+  path: '/calendar',
   getParentRoute: () => rootRouteImport,
 } as any)
-const WirdIndexRoute = WirdIndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => WirdRoute,
-} as any)
-const TasbihIndexRoute = TasbihIndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => TasbihRoute,
-} as any)
-const SeasonsIndexRoute = SeasonsIndexRouteImport.update({
-  id: '/seasons/',
-  path: '/seasons/',
+const IqamaRoute = IqamaRouteImport.update({
+  id: '/iqama',
+  path: '/iqama',
   getParentRoute: () => rootRouteImport,
 } as any)
-const WirdSessionRoute = WirdSessionRouteImport.update({
-  id: '/$session',
-  path: '/$session',
-  getParentRoute: () => WirdRoute,
-} as any)
-const TasbihLibraryRoute = TasbihLibraryRouteImport.update({
-  id: '/library',
-  path: '/library',
-  getParentRoute: () => TasbihRoute,
-} as any)
-const SeasonsSeasonRoute = SeasonsSeasonRouteImport.update({
-  id: '/seasons/$season',
-  path: '/seasons/$season',
+const JumuahRoute = JumuahRouteImport.update({
+  id: '/jumuah',
+  path: '/jumuah',
   getParentRoute: () => rootRouteImport,
 } as any)
-const QuranTafsirRoute = QuranTafsirRouteImport.update({
-  id: '/quran/tafsir',
-  path: '/quran/tafsir',
+const MyDataRoute = MyDataRouteImport.update({
+  id: '/my-data',
+  path: '/my-data',
   getParentRoute: () => rootRouteImport,
 } as any)
-const QuranShareRoute = QuranShareRouteImport.update({
-  id: '/quran/share',
-  path: '/quran/share',
+const NotificationsRoute = NotificationsRouteImport.update({
+  id: '/notifications',
+  path: '/notifications',
   getParentRoute: () => rootRouteImport,
 } as any)
-const QuranSearchRoute = QuranSearchRouteImport.update({
-  id: '/quran/search',
-  path: '/quran/search',
+const OnboardingRoute = OnboardingRouteImport.update({
+  id: '/onboarding',
+  path: '/onboarding',
   getParentRoute: () => rootRouteImport,
 } as any)
-const QuranRecitationsRoute = QuranRecitationsRouteImport.update({
-  id: '/quran/recitations',
-  path: '/quran/recitations',
+const PrivacyRoute = PrivacyRouteImport.update({
+  id: '/privacy',
+  path: '/privacy',
   getParentRoute: () => rootRouteImport,
 } as any)
-const QuranReaderSettingsRoute = QuranReaderSettingsRouteImport.update({
-  id: '/quran/reader-settings',
-  path: '/quran/reader-settings',
+const QiblaRoute = QiblaRouteImport.update({
+  id: '/qibla',
+  path: '/qibla',
   getParentRoute: () => rootRouteImport,
 } as any)
-const QuranMushafRoute = QuranMushafRouteImport.update({
-  id: '/quran/mushaf',
-  path: '/quran/mushaf',
+const RemindersRoute = RemindersRouteImport.update({
+  id: '/reminders',
+  path: '/reminders',
   getParentRoute: () => rootRouteImport,
 } as any)
-const QuranLastReadRoute = QuranLastReadRouteImport.update({
-  id: '/quran/last-read',
-  path: '/quran/last-read',
+const SakinahRoute = SakinahRouteImport.update({
+  id: '/sakinah',
+  path: '/sakinah',
   getParentRoute: () => rootRouteImport,
 } as any)
-const QuranKhatmahRoute = QuranKhatmahRouteImport.update({
-  id: '/quran/khatmah',
-  path: '/quran/khatmah',
+const SettingsRoute = SettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
   getParentRoute: () => rootRouteImport,
 } as any)
-const QuranBookmarksRoute = QuranBookmarksRouteImport.update({
-  id: '/quran/bookmarks',
-  path: '/quran/bookmarks',
+const SourcesRoute = SourcesRouteImport.update({
+  id: '/sources',
+  path: '/sources',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AzkarSearchRoute = AzkarSearchRouteImport.update({
-  id: '/azkar/search',
-  path: '/azkar/search',
+const StatisticsRoute = StatisticsRouteImport.update({
+  id: '/statistics',
+  path: '/statistics',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AzkarBookmarksRoute = AzkarBookmarksRouteImport.update({
-  id: '/azkar/bookmarks',
-  path: '/azkar/bookmarks',
+const TasbihRoute = TasbihRouteImport.update({
+  id: '/tasbih',
+  path: '/tasbih',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AzkarChapterRoute = AzkarChapterRouteImport.update({
-  id: '/azkar/$chapter',
-  path: '/azkar/$chapter',
+const TermsRoute = TermsRouteImport.update({
+  id: '/terms',
+  path: '/terms',
   getParentRoute: () => rootRouteImport,
 } as any)
-const TabsQuranRoute = TabsQuranRouteImport.update({
-  id: '/quran',
-  path: '/quran',
-  getParentRoute: () => TabsRoute,
+const WidgetRoute = WidgetRouteImport.update({
+  id: '/widget',
+  path: '/widget',
+  getParentRoute: () => rootRouteImport,
 } as any)
-const TabsPrayerRoute = TabsPrayerRouteImport.update({
-  id: '/prayer',
-  path: '/prayer',
-  getParentRoute: () => TabsRoute,
+const WirdRoute = WirdRouteImport.update({
+  id: '/wird',
+  path: '/wird',
+  getParentRoute: () => rootRouteImport,
 } as any)
-const TabsMoreRoute = TabsMoreRouteImport.update({
-  id: '/more',
-  path: '/more',
+const TabsAzkarRoute = TabsAzkarRouteImport.update({
+  id: '/azkar',
+  path: '/azkar',
   getParentRoute: () => TabsRoute,
 } as any)
 const TabsHomeRoute = TabsHomeRouteImport.update({
@@ -270,20 +170,120 @@ const TabsHomeRoute = TabsHomeRouteImport.update({
   path: '/home',
   getParentRoute: () => TabsRoute,
 } as any)
-const TabsAzkarRoute = TabsAzkarRouteImport.update({
-  id: '/azkar',
-  path: '/azkar',
+const TabsMoreRoute = TabsMoreRouteImport.update({
+  id: '/more',
+  path: '/more',
   getParentRoute: () => TabsRoute,
 } as any)
-const WirdListSessionRoute = WirdListSessionRouteImport.update({
-  id: '/list/$session',
-  path: '/list/$session',
+const TabsPrayerRoute = TabsPrayerRouteImport.update({
+  id: '/prayer',
+  path: '/prayer',
+  getParentRoute: () => TabsRoute,
+} as any)
+const TabsQuranRoute = TabsQuranRouteImport.update({
+  id: '/quran',
+  path: '/quran',
+  getParentRoute: () => TabsRoute,
+} as any)
+const AzkarChapterRoute = AzkarChapterRouteImport.update({
+  id: '/azkar/$chapter',
+  path: '/azkar/$chapter',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AzkarBookmarksRoute = AzkarBookmarksRouteImport.update({
+  id: '/azkar/bookmarks',
+  path: '/azkar/bookmarks',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AzkarSearchRoute = AzkarSearchRouteImport.update({
+  id: '/azkar/search',
+  path: '/azkar/search',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const QuranBookmarksRoute = QuranBookmarksRouteImport.update({
+  id: '/quran/bookmarks',
+  path: '/quran/bookmarks',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const QuranKhatmahRoute = QuranKhatmahRouteImport.update({
+  id: '/quran/khatmah',
+  path: '/quran/khatmah',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const QuranLastReadRoute = QuranLastReadRouteImport.update({
+  id: '/quran/last-read',
+  path: '/quran/last-read',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const QuranMushafRoute = QuranMushafRouteImport.update({
+  id: '/quran/mushaf',
+  path: '/quran/mushaf',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const QuranReaderSettingsRoute = QuranReaderSettingsRouteImport.update({
+  id: '/quran/reader-settings',
+  path: '/quran/reader-settings',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const QuranRecitationsRoute = QuranRecitationsRouteImport.update({
+  id: '/quran/recitations',
+  path: '/quran/recitations',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const QuranSearchRoute = QuranSearchRouteImport.update({
+  id: '/quran/search',
+  path: '/quran/search',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const QuranShareRoute = QuranShareRouteImport.update({
+  id: '/quran/share',
+  path: '/quran/share',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const QuranTafsirRoute = QuranTafsirRouteImport.update({
+  id: '/quran/tafsir',
+  path: '/quran/tafsir',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SeasonsIndexRoute = SeasonsIndexRouteImport.update({
+  id: '/seasons/',
+  path: '/seasons/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SeasonsSeasonRoute = SeasonsSeasonRouteImport.update({
+  id: '/seasons/$season',
+  path: '/seasons/$season',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TasbihIndexRoute = TasbihIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => TasbihRoute,
+} as any)
+const TasbihLibraryRoute = TasbihLibraryRouteImport.update({
+  id: '/library',
+  path: '/library',
+  getParentRoute: () => TasbihRoute,
+} as any)
+const WirdIndexRoute = WirdIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => WirdRoute,
+} as any)
+const WirdSessionRoute = WirdSessionRouteImport.update({
+  id: '/$session',
+  path: '/$session',
   getParentRoute: () => WirdRoute,
 } as any)
 const AzkarGroupGroupRoute = AzkarGroupGroupRouteImport.update({
   id: '/azkar/group/$group',
   path: '/azkar/group/$group',
   getParentRoute: () => rootRouteImport,
+} as any)
+const WirdListSessionRoute = WirdListSessionRouteImport.update({
+  id: '/list/$session',
+  path: '/list/$session',
+  getParentRoute: () => WirdRoute,
 } as any)
 
 export interface FileRoutesByFullPath {
@@ -611,137 +611,11 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/wird': {
-      id: '/wird'
-      path: '/wird'
-      fullPath: '/wird'
-      preLoaderRoute: typeof WirdRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/widget': {
-      id: '/widget'
-      path: '/widget'
-      fullPath: '/widget'
-      preLoaderRoute: typeof WidgetRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/terms': {
-      id: '/terms'
-      path: '/terms'
-      fullPath: '/terms'
-      preLoaderRoute: typeof TermsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/tasbih': {
-      id: '/tasbih'
-      path: '/tasbih'
-      fullPath: '/tasbih'
-      preLoaderRoute: typeof TasbihRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/statistics': {
-      id: '/statistics'
-      path: '/statistics'
-      fullPath: '/statistics'
-      preLoaderRoute: typeof StatisticsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/sources': {
-      id: '/sources'
-      path: '/sources'
-      fullPath: '/sources'
-      preLoaderRoute: typeof SourcesRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/settings': {
-      id: '/settings'
-      path: '/settings'
-      fullPath: '/settings'
-      preLoaderRoute: typeof SettingsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/sakinah': {
-      id: '/sakinah'
-      path: '/sakinah'
-      fullPath: '/sakinah'
-      preLoaderRoute: typeof SakinahRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/reminders': {
-      id: '/reminders'
-      path: '/reminders'
-      fullPath: '/reminders'
-      preLoaderRoute: typeof RemindersRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/qibla': {
-      id: '/qibla'
-      path: '/qibla'
-      fullPath: '/qibla'
-      preLoaderRoute: typeof QiblaRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/privacy': {
-      id: '/privacy'
-      path: '/privacy'
-      fullPath: '/privacy'
-      preLoaderRoute: typeof PrivacyRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/onboarding': {
-      id: '/onboarding'
-      path: '/onboarding'
-      fullPath: '/onboarding'
-      preLoaderRoute: typeof OnboardingRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/notifications': {
-      id: '/notifications'
-      path: '/notifications'
-      fullPath: '/notifications'
-      preLoaderRoute: typeof NotificationsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/my-data': {
-      id: '/my-data'
-      path: '/my-data'
-      fullPath: '/my-data'
-      preLoaderRoute: typeof MyDataRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/jumuah': {
-      id: '/jumuah'
-      path: '/jumuah'
-      fullPath: '/jumuah'
-      preLoaderRoute: typeof JumuahRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/iqama': {
-      id: '/iqama'
-      path: '/iqama'
-      fullPath: '/iqama'
-      preLoaderRoute: typeof IqamaRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/calendar': {
-      id: '/calendar'
-      path: '/calendar'
-      fullPath: '/calendar'
-      preLoaderRoute: typeof CalendarRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/adhan': {
-      id: '/adhan'
-      path: '/adhan'
-      fullPath: '/adhan'
-      preLoaderRoute: typeof AdhanRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/about': {
-      id: '/about'
-      path: '/about'
-      fullPath: '/about'
-      preLoaderRoute: typeof AboutRouteImport
+    '/': {
+      id: '/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_tabs': {
@@ -751,158 +625,144 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TabsRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/': {
-      id: '/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
+    '/about': {
+      id: '/about'
+      path: '/about'
+      fullPath: '/about'
+      preLoaderRoute: typeof AboutRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/wird/': {
-      id: '/wird/'
-      path: '/'
-      fullPath: '/wird/'
-      preLoaderRoute: typeof WirdIndexRouteImport
-      parentRoute: typeof WirdRoute
-    }
-    '/tasbih/': {
-      id: '/tasbih/'
-      path: '/'
-      fullPath: '/tasbih/'
-      preLoaderRoute: typeof TasbihIndexRouteImport
-      parentRoute: typeof TasbihRoute
-    }
-    '/seasons/': {
-      id: '/seasons/'
-      path: '/seasons'
-      fullPath: '/seasons/'
-      preLoaderRoute: typeof SeasonsIndexRouteImport
+    '/adhan': {
+      id: '/adhan'
+      path: '/adhan'
+      fullPath: '/adhan'
+      preLoaderRoute: typeof AdhanRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/wird/$session': {
-      id: '/wird/$session'
-      path: '/$session'
-      fullPath: '/wird/$session'
-      preLoaderRoute: typeof WirdSessionRouteImport
-      parentRoute: typeof WirdRoute
-    }
-    '/tasbih/library': {
-      id: '/tasbih/library'
-      path: '/library'
-      fullPath: '/tasbih/library'
-      preLoaderRoute: typeof TasbihLibraryRouteImport
-      parentRoute: typeof TasbihRoute
-    }
-    '/seasons/$season': {
-      id: '/seasons/$season'
-      path: '/seasons/$season'
-      fullPath: '/seasons/$season'
-      preLoaderRoute: typeof SeasonsSeasonRouteImport
+    '/calendar': {
+      id: '/calendar'
+      path: '/calendar'
+      fullPath: '/calendar'
+      preLoaderRoute: typeof CalendarRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/quran/tafsir': {
-      id: '/quran/tafsir'
-      path: '/quran/tafsir'
-      fullPath: '/quran/tafsir'
-      preLoaderRoute: typeof QuranTafsirRouteImport
+    '/iqama': {
+      id: '/iqama'
+      path: '/iqama'
+      fullPath: '/iqama'
+      preLoaderRoute: typeof IqamaRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/quran/share': {
-      id: '/quran/share'
-      path: '/quran/share'
-      fullPath: '/quran/share'
-      preLoaderRoute: typeof QuranShareRouteImport
+    '/jumuah': {
+      id: '/jumuah'
+      path: '/jumuah'
+      fullPath: '/jumuah'
+      preLoaderRoute: typeof JumuahRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/quran/search': {
-      id: '/quran/search'
-      path: '/quran/search'
-      fullPath: '/quran/search'
-      preLoaderRoute: typeof QuranSearchRouteImport
+    '/my-data': {
+      id: '/my-data'
+      path: '/my-data'
+      fullPath: '/my-data'
+      preLoaderRoute: typeof MyDataRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/quran/recitations': {
-      id: '/quran/recitations'
-      path: '/quran/recitations'
-      fullPath: '/quran/recitations'
-      preLoaderRoute: typeof QuranRecitationsRouteImport
+    '/notifications': {
+      id: '/notifications'
+      path: '/notifications'
+      fullPath: '/notifications'
+      preLoaderRoute: typeof NotificationsRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/quran/reader-settings': {
-      id: '/quran/reader-settings'
-      path: '/quran/reader-settings'
-      fullPath: '/quran/reader-settings'
-      preLoaderRoute: typeof QuranReaderSettingsRouteImport
+    '/onboarding': {
+      id: '/onboarding'
+      path: '/onboarding'
+      fullPath: '/onboarding'
+      preLoaderRoute: typeof OnboardingRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/quran/mushaf': {
-      id: '/quran/mushaf'
-      path: '/quran/mushaf'
-      fullPath: '/quran/mushaf'
-      preLoaderRoute: typeof QuranMushafRouteImport
+    '/privacy': {
+      id: '/privacy'
+      path: '/privacy'
+      fullPath: '/privacy'
+      preLoaderRoute: typeof PrivacyRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/quran/last-read': {
-      id: '/quran/last-read'
-      path: '/quran/last-read'
-      fullPath: '/quran/last-read'
-      preLoaderRoute: typeof QuranLastReadRouteImport
+    '/qibla': {
+      id: '/qibla'
+      path: '/qibla'
+      fullPath: '/qibla'
+      preLoaderRoute: typeof QiblaRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/quran/khatmah': {
-      id: '/quran/khatmah'
-      path: '/quran/khatmah'
-      fullPath: '/quran/khatmah'
-      preLoaderRoute: typeof QuranKhatmahRouteImport
+    '/reminders': {
+      id: '/reminders'
+      path: '/reminders'
+      fullPath: '/reminders'
+      preLoaderRoute: typeof RemindersRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/quran/bookmarks': {
-      id: '/quran/bookmarks'
-      path: '/quran/bookmarks'
-      fullPath: '/quran/bookmarks'
-      preLoaderRoute: typeof QuranBookmarksRouteImport
+    '/sakinah': {
+      id: '/sakinah'
+      path: '/sakinah'
+      fullPath: '/sakinah'
+      preLoaderRoute: typeof SakinahRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/azkar/search': {
-      id: '/azkar/search'
-      path: '/azkar/search'
-      fullPath: '/azkar/search'
-      preLoaderRoute: typeof AzkarSearchRouteImport
+    '/settings': {
+      id: '/settings'
+      path: '/settings'
+      fullPath: '/settings'
+      preLoaderRoute: typeof SettingsRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/azkar/bookmarks': {
-      id: '/azkar/bookmarks'
-      path: '/azkar/bookmarks'
-      fullPath: '/azkar/bookmarks'
-      preLoaderRoute: typeof AzkarBookmarksRouteImport
+    '/sources': {
+      id: '/sources'
+      path: '/sources'
+      fullPath: '/sources'
+      preLoaderRoute: typeof SourcesRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/azkar/$chapter': {
-      id: '/azkar/$chapter'
-      path: '/azkar/$chapter'
-      fullPath: '/azkar/$chapter'
-      preLoaderRoute: typeof AzkarChapterRouteImport
+    '/statistics': {
+      id: '/statistics'
+      path: '/statistics'
+      fullPath: '/statistics'
+      preLoaderRoute: typeof StatisticsRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/_tabs/quran': {
-      id: '/_tabs/quran'
-      path: '/quran'
-      fullPath: '/quran'
-      preLoaderRoute: typeof TabsQuranRouteImport
-      parentRoute: typeof TabsRoute
+    '/tasbih': {
+      id: '/tasbih'
+      path: '/tasbih'
+      fullPath: '/tasbih'
+      preLoaderRoute: typeof TasbihRouteImport
+      parentRoute: typeof rootRouteImport
     }
-    '/_tabs/prayer': {
-      id: '/_tabs/prayer'
-      path: '/prayer'
-      fullPath: '/prayer'
-      preLoaderRoute: typeof TabsPrayerRouteImport
-      parentRoute: typeof TabsRoute
+    '/terms': {
+      id: '/terms'
+      path: '/terms'
+      fullPath: '/terms'
+      preLoaderRoute: typeof TermsRouteImport
+      parentRoute: typeof rootRouteImport
     }
-    '/_tabs/more': {
-      id: '/_tabs/more'
-      path: '/more'
-      fullPath: '/more'
-      preLoaderRoute: typeof TabsMoreRouteImport
+    '/widget': {
+      id: '/widget'
+      path: '/widget'
+      fullPath: '/widget'
+      preLoaderRoute: typeof WidgetRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/wird': {
+      id: '/wird'
+      path: '/wird'
+      fullPath: '/wird'
+      preLoaderRoute: typeof WirdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_tabs/azkar': {
+      id: '/_tabs/azkar'
+      path: '/azkar'
+      fullPath: '/azkar'
+      preLoaderRoute: typeof TabsAzkarRouteImport
       parentRoute: typeof TabsRoute
     }
     '/_tabs/home': {
@@ -912,18 +772,151 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TabsHomeRouteImport
       parentRoute: typeof TabsRoute
     }
-    '/_tabs/azkar': {
-      id: '/_tabs/azkar'
-      path: '/azkar'
-      fullPath: '/azkar'
-      preLoaderRoute: typeof TabsAzkarRouteImport
+    '/_tabs/more': {
+      id: '/_tabs/more'
+      path: '/more'
+      fullPath: '/more'
+      preLoaderRoute: typeof TabsMoreRouteImport
       parentRoute: typeof TabsRoute
     }
-    '/wird/list/$session': {
-      id: '/wird/list/$session'
-      path: '/list/$session'
-      fullPath: '/wird/list/$session'
-      preLoaderRoute: typeof WirdListSessionRouteImport
+    '/_tabs/prayer': {
+      id: '/_tabs/prayer'
+      path: '/prayer'
+      fullPath: '/prayer'
+      preLoaderRoute: typeof TabsPrayerRouteImport
+      parentRoute: typeof TabsRoute
+    }
+    '/_tabs/quran': {
+      id: '/_tabs/quran'
+      path: '/quran'
+      fullPath: '/quran'
+      preLoaderRoute: typeof TabsQuranRouteImport
+      parentRoute: typeof TabsRoute
+    }
+    '/azkar/$chapter': {
+      id: '/azkar/$chapter'
+      path: '/azkar/$chapter'
+      fullPath: '/azkar/$chapter'
+      preLoaderRoute: typeof AzkarChapterRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/azkar/bookmarks': {
+      id: '/azkar/bookmarks'
+      path: '/azkar/bookmarks'
+      fullPath: '/azkar/bookmarks'
+      preLoaderRoute: typeof AzkarBookmarksRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/azkar/search': {
+      id: '/azkar/search'
+      path: '/azkar/search'
+      fullPath: '/azkar/search'
+      preLoaderRoute: typeof AzkarSearchRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/quran/bookmarks': {
+      id: '/quran/bookmarks'
+      path: '/quran/bookmarks'
+      fullPath: '/quran/bookmarks'
+      preLoaderRoute: typeof QuranBookmarksRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/quran/khatmah': {
+      id: '/quran/khatmah'
+      path: '/quran/khatmah'
+      fullPath: '/quran/khatmah'
+      preLoaderRoute: typeof QuranKhatmahRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/quran/last-read': {
+      id: '/quran/last-read'
+      path: '/quran/last-read'
+      fullPath: '/quran/last-read'
+      preLoaderRoute: typeof QuranLastReadRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/quran/mushaf': {
+      id: '/quran/mushaf'
+      path: '/quran/mushaf'
+      fullPath: '/quran/mushaf'
+      preLoaderRoute: typeof QuranMushafRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/quran/reader-settings': {
+      id: '/quran/reader-settings'
+      path: '/quran/reader-settings'
+      fullPath: '/quran/reader-settings'
+      preLoaderRoute: typeof QuranReaderSettingsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/quran/recitations': {
+      id: '/quran/recitations'
+      path: '/quran/recitations'
+      fullPath: '/quran/recitations'
+      preLoaderRoute: typeof QuranRecitationsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/quran/search': {
+      id: '/quran/search'
+      path: '/quran/search'
+      fullPath: '/quran/search'
+      preLoaderRoute: typeof QuranSearchRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/quran/share': {
+      id: '/quran/share'
+      path: '/quran/share'
+      fullPath: '/quran/share'
+      preLoaderRoute: typeof QuranShareRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/quran/tafsir': {
+      id: '/quran/tafsir'
+      path: '/quran/tafsir'
+      fullPath: '/quran/tafsir'
+      preLoaderRoute: typeof QuranTafsirRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/seasons/': {
+      id: '/seasons/'
+      path: '/seasons'
+      fullPath: '/seasons/'
+      preLoaderRoute: typeof SeasonsIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/seasons/$season': {
+      id: '/seasons/$season'
+      path: '/seasons/$season'
+      fullPath: '/seasons/$season'
+      preLoaderRoute: typeof SeasonsSeasonRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/tasbih/': {
+      id: '/tasbih/'
+      path: '/'
+      fullPath: '/tasbih/'
+      preLoaderRoute: typeof TasbihIndexRouteImport
+      parentRoute: typeof TasbihRoute
+    }
+    '/tasbih/library': {
+      id: '/tasbih/library'
+      path: '/library'
+      fullPath: '/tasbih/library'
+      preLoaderRoute: typeof TasbihLibraryRouteImport
+      parentRoute: typeof TasbihRoute
+    }
+    '/wird/': {
+      id: '/wird/'
+      path: '/'
+      fullPath: '/wird/'
+      preLoaderRoute: typeof WirdIndexRouteImport
+      parentRoute: typeof WirdRoute
+    }
+    '/wird/$session': {
+      id: '/wird/$session'
+      path: '/$session'
+      fullPath: '/wird/$session'
+      preLoaderRoute: typeof WirdSessionRouteImport
       parentRoute: typeof WirdRoute
     }
     '/azkar/group/$group': {
@@ -932,6 +925,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/azkar/group/$group'
       preLoaderRoute: typeof AzkarGroupGroupRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/wird/list/$session': {
+      id: '/wird/list/$session'
+      path: '/list/$session'
+      fullPath: '/wird/list/$session'
+      preLoaderRoute: typeof WirdListSessionRouteImport
+      parentRoute: typeof WirdRoute
     }
   }
 }

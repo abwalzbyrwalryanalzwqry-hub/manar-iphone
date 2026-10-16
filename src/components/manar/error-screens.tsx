@@ -4,7 +4,7 @@
 // الإنجليزي الافتراضي ("Not Found" / "This page didn't load") — وهو النص نفسه
 // الذي ظهر على أندرويد وأوهمنا بأنه صفحة خطأ WebView. الآن الملف واحد ويُسجَّل
 // كافتراضي للراوتر كله في src/router.tsx. مصدرها فرع android-release-prep.
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import { Link, useRouter } from "@tanstack/react-router";
 
 export function ManarNotFound() {
@@ -29,8 +29,10 @@ export function ManarNotFound() {
   );
 }
 
-export function ManarRouteError({ error, reset }: { error: Error; reset?: () => void }) {
+export function ManarRouteError({ error: raw, reset }: { error: unknown; reset?: () => void }) {
   const router = useRouter();
+  // TanStack Router يمرّر الخطأ بنوع unknown (قد يُرمى أي شيء)؛ نوحّده إلى Error.
+  const error = useMemo(() => (raw instanceof Error ? raw : new Error(String(raw))), [raw]);
 
   // logcat هو المكان الوحيد الذي يُقرأ فيه خطأ وقع على جهاز المستخدم.
   useEffect(() => {

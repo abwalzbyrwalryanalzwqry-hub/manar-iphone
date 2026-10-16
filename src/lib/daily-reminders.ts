@@ -750,11 +750,7 @@ export type DoneToday = {
 
 /** ما يُعدّ إنجازاً لكل تذكير. */
 export type CompletionKey =
-  | "azkar-morning"
-  | "azkar-evening"
-  | "wird-morning"
-  | "azkar-sleep"
-  | "azkar-wake";
+  "azkar-morning" | "azkar-evening" | "wird-morning" | "azkar-sleep" | "azkar-wake";
 
 export function completionKeyFor(r: DailyReminder): CompletionKey | null {
   if (r.id === "azkar-morning") return "azkar-morning";

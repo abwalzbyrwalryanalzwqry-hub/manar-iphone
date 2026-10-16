@@ -30,7 +30,7 @@ describe("الآيات المجمّعة في التفسير", () => {
   it("التنقل بالمجموعات يمرّ على كل آيات السورة دون تكرار", () => {
     const data = tafsirFile("ar-tafsir-muyassar", 2);
     const seen: number[] = [];
-    for (let a = 1; a <= 286; ) {
+    for (let a = 1; a <= 286;) {
       const g = tafsirGroup(data, a)!;
       for (let n = g.from; n <= g.to; n++) seen.push(n);
       a = g.to + 1;
