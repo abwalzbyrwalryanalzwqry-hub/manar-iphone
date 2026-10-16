@@ -234,8 +234,7 @@ export interface PersonalInput {
 }
 
 export type OpResult =
-  | { ok: true; store: PersonalAzkarStore; zikr: PersonalZikr }
-  | { ok: false; error: string };
+  { ok: true; store: PersonalAzkarStore; zikr: PersonalZikr } | { ok: false; error: string };
 
 export const PROTECTED_ERROR = "هذا ذكر أصلي من منار، ولا يمكن تعديله أو حذفه.";
 export const NOT_FOUND_ERROR = "لم يُعثر على هذا الذكر — ربما حُذف.";

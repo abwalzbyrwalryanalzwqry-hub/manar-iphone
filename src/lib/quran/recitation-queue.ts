@@ -91,9 +91,7 @@ export function nextTrack(
 
 /** إيقاف التلاوة بعد دقائق، أو عند نهاية السورة الحالية. */
 export type SleepTimer =
-  | { kind: "minutes"; until: number; minutes: number }
-  | { kind: "surah" }
-  | null;
+  { kind: "minutes"; until: number; minutes: number } | { kind: "surah" } | null;
 
 export const SLEEP_OPTIONS = [5, 10, 15, 30, 45, 60] as const;
 
